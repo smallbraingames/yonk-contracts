@@ -4,6 +4,7 @@ pragma solidity >=0.8.21;
 import { YellTest } from "../YellTest.t.sol";
 
 contract GetIdSystemTest is YellTest {
+
   function test_RevertsWhen_GetIdNotCalledFromAllowedSystems() public {
     vm.expectRevert();
     vm.prank(address(0xcafe));
