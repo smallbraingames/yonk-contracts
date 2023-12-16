@@ -5,6 +5,10 @@ export default mudConfig({
         ClaimSystem: {
             openAccess: true
         },
+        GetIdSystem: {
+            openAccess: false,
+            accessList: ["RegisterSystem", "YellSystem"]
+        },
         RegisterSystem: {
             openAccess: true,
         },
@@ -13,12 +17,11 @@ export default mudConfig({
         },
     },
     tables: {
-        CounterTable: {
+        Id: {
             keySchema: {},
             valueSchema: {
-                value: "uint32",
+                value: "uint64",
             },
-            storeArgument: true,
         },
     },
 });
