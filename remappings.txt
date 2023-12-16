@@ -1,3 +1,4 @@
+@latticexyz/=node_modules/@latticexyz/
 ds-test/=node_modules/ds-test/src/
 forge-std/=node_modules/forge-std/src/
-@latticexyz/=node_modules/@latticexyz/
+p256-verifier/=node_modules/p256-verifier/src/

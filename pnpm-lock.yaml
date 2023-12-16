@@ -35,6 +35,9 @@ devDependencies:
   forge-std:
     specifier: https://github.com/foundry-rs/forge-std.git#74cfb77e308dd188d2f58864aaf44963ae6b88b1
     version: github.com/foundry-rs/forge-std/74cfb77e308dd188d2f58864aaf44963ae6b88b1
+  p256-verifier:
+    specifier: https://github.com/daimo-eth/p256-verifier.git#29475ae300ec95d98d5c7cc34c094846f0aa2dcd
+    version: github.com/daimo-eth/p256-verifier/29475ae300ec95d98d5c7cc34c094846f0aa2dcd
   prettier:
     specifier: ^2.6.2
     version: 2.8.8
@@ -2635,6 +2638,12 @@ packages:
 
   /zod@3.22.4:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
+    dev: true
+
+  github.com/daimo-eth/p256-verifier/29475ae300ec95d98d5c7cc34c094846f0aa2dcd:
+    resolution: {tarball: https://codeload.github.com/daimo-eth/p256-verifier/tar.gz/29475ae300ec95d98d5c7cc34c094846f0aa2dcd}
+    name: p256-verifier.git#29475ae300ec95d98d5c7cc34c094846f0aa2dcd
+    version: 0.0.0
     dev: true
 
   github.com/dapphub/ds-test/e282159d5170298eb2455a6c05280ab5a73a4ef0:
