@@ -23,5 +23,13 @@ export default mudConfig({
                 value: "uint64",
             },
         },
+        Registration: {
+            keySchema: {id: "uint64"}, 
+            valueSchema: {
+                devicePublicKeyX: "uint256",
+                devicePublicKeyY: "uint256",
+                accountAddress: "address"
+            },
+        }
     },
 });
