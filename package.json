@@ -4,14 +4,14 @@
     "private": true,
     "license": "MIT",
     "scripts": {
-      "build": "mud tablegen && mud tablegen && forge build",
+      "build": "mud worldgen && mud tablegen && forge build",
       "clean": "forge clean && rimraf src/codegen",
       "deploy:local": "pnpm run build && mud deploy",
       "deploy:testnet": "pnpm run build && mud deploy --profile=lattice-testnet",
       "dev": "pnpm mud dev-contracts",
       "faucet": "DEBUG=mud:faucet pnpm faucet-server",
       "lint": "pnpm run prettier && pnpm run solhint",
-      "prettier": "prettier --write 'src/**/*.sol'",
+      "prettier": "prettier --write 'src/**/*.sol' && prettier --write 'test/**/*.sol'",
       "solhint": "solhint --config ./.solhint.json 'src/**/*.sol' --fix",
       "test": "mud test"
     },
