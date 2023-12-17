@@ -1,19 +1,30 @@
+[fmt]
+  sort_imports=true
+  bracket_spacing = true
+  int_types = "long"
+  line_length = 120
+  multiline_func_header = "all"
+  number_underscore = "thousands"
+  quote_style = "double"
+  tab_width = 4
+  wrap_comments = true
+
 [profile.default]
-solc = "0.8.21"
-ffi = false
-fuzz_runs = 256
-optimizer = true
-optimizer_runs = 3000
-verbosity = 2
-src = "src"
-test = "test"
-out = "out"
-extra_output_files = [
-  "abi",
-  "evm.bytecode"
-]
-fs_permissions = [{ access = "read", path = "./"}]
-via_ir=true
+  solc = "0.8.21"
+  ffi = false
+  fuzz_runs = 256
+  optimizer = true
+  optimizer_runs = 3000
+  verbosity = 2
+  src = "src"
+  test = "test"
+  out = "out"
+  extra_output_files = [
+    "abi",
+    "evm.bytecode"
+  ]
+  fs_permissions = [{ access = "read", path = "./"}]
+  via_ir=true
 
 [profile.lattice-testnet]
-eth_rpc_url = "https://follower.testnet-chain.linfra.xyz"
+  eth_rpc_url = "https://follower.testnet-chain.linfra.xyz"

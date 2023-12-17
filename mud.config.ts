@@ -1,3 +1,4 @@
+import { resolveTableId } from "@latticexyz/config";
 import { mudConfig } from "@latticexyz/world/register";
 
 export default mudConfig({
@@ -24,12 +25,24 @@ export default mudConfig({
             },
         },
         Registration: {
-            keySchema: {id: "uint64"}, 
+            keySchema: { id: "uint64" },
             valueSchema: {
                 devicePublicKeyX: "uint256",
                 devicePublicKeyY: "uint256",
-                accountAddress: "address"
             },
-        }
+        },
+        RegisteredAddress: {
+            keySchema: { id: "uint64" },
+            valueSchema: {
+                value: "address",
+            },
+        },
     },
+    modules: [
+        {
+            name: "KeysWithValueModule",
+            root: true,
+            args: [resolveTableId("RegisteredAddress")],
+        },
+    ],
 });
