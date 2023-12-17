@@ -9,6 +9,7 @@ contract GetIdSystemTest is YellTest {
         assertEq(Id.get(), 0);
         world.register({ devicePublicKeyX: 0, devicePublicKeyY: 0 });
         assertEq(Id.get(), 1);
+        vm.prank(address(0xcafe));
         world.register({ devicePublicKeyX: 0, devicePublicKeyY: 0 });
         assertEq(Id.get(), 2);
     }
