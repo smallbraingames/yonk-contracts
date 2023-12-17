@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.21;
 
+import { RegisterSystem } from "../../src/systems/RegisterSystem.sol";
 import { YellTest } from "../YellTest.t.sol";
 import { RegisteredAddress, Registration, RegistrationData } from "codegen/index.sol";
 
@@ -24,5 +25,14 @@ contract RegisterSystemTest is YellTest {
         assertEq(registration.devicePublicKeyX, devicePublicKeyX);
         assertEq(registration.devicePublicKeyY, devicePublicKeyY);
         assertEq(RegisteredAddress.get(1), sender);
+    }
+
+    function test_RevertsWhen_DuplicateRegister() public {
+        address sender = address(0xface);
+        vm.prank(sender);
+        world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
+        vm.expectRevert(RegisterSystem.AlreadyRegistered.selector);
+        vm.prank(sender);
+        world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
     }
 }
