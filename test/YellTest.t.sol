@@ -2,8 +2,8 @@
 pragma solidity >=0.8.21;
 
 import { MudTest } from "@latticexyz/world/test/MudTest.t.sol";
-
 import { IWorld } from "codegen/world/IWorld.sol";
+import "forge-std/Test.sol";
 import { P256 } from "p256-verifier/P256.sol";
 import { P256Verifier } from "p256-verifier/P256Verifier.sol";
 

@@ -12,7 +12,7 @@
 [profile.default]
   solc = "0.8.21"
   ffi = false
-  fuzz_runs = 256
+  fuzz_runs = 512
   optimizer = true
   optimizer_runs = 3000
   verbosity = 2
