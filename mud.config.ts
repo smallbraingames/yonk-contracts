@@ -37,6 +37,19 @@ export default mudConfig({
                 value: "address",
             },
         },
+        Yell: {
+            keySchema: { id: "uint64" },
+            valueSchema: {
+                dataCommitment: "uint256",
+                startValue: "uint256",
+                endValue: "uint256",
+                lifeSeconds: "uint256",
+                startTimestamp: "uint256",
+                from: "uint64",
+                to: "uint64",
+                claimed: "bool"
+            },
+        }
     },
     modules: [
         {

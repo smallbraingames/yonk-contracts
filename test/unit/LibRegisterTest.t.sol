@@ -2,6 +2,8 @@
 pragma solidity >=0.8.21;
 
 import { YellTest } from "../YellTest.t.sol";
+
+import { RegisteredAddress, Registration } from "codegen/index.sol";
 import { LibRegister } from "libraries/LibRegister.sol";
 
 contract LibRegisterTest is YellTest {
@@ -13,16 +15,23 @@ contract LibRegisterTest is YellTest {
     }
 
     function testFuzz_IsRegisteredTrueWhenRegistered(
-        address accountAddress,
+        address accountAddressOne,
+        address accountAddressTwo,
         uint256 devicePublicKeyX,
         uint256 devicePublicKeyY
     )
         public
     {
-        vm.assume(accountAddress != address(0));
-        vm.prank(accountAddress);
+        vm.assume(accountAddressOne != address(0) && accountAddressTwo != address(0));
+        vm.assume(accountAddressOne != accountAddressTwo);
+
+        vm.prank(accountAddressOne);
         world.register({ devicePublicKeyX: devicePublicKeyX, devicePublicKeyY: devicePublicKeyY });
-        assertTrue(LibRegister.isRegistered({ accountAddress: accountAddress }));
+        assertTrue(LibRegister.isRegistered({ accountAddress: accountAddressOne }));
+
+        vm.prank(accountAddressTwo);
+        world.register({ devicePublicKeyX: devicePublicKeyX, devicePublicKeyY: devicePublicKeyY });
+        assertTrue(LibRegister.isRegistered({ accountAddress: accountAddressTwo }));
     }
 
     function test_IsRegisteredFalseWhenNoRegistrations() public {
