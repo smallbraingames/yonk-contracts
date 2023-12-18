@@ -16,7 +16,7 @@ contract YellSystem is System {
     error UnsafeCast();
     error NoSelfYell();
 
-    function yell(uint256 dataCommitment, uint136 encodedYellInfo) public payable returns (uint64) {
+    function yell(bytes32 dataCommitment, uint136 encodedYellInfo) public payable returns (uint64) {
         YellInfo memory yellInfo = LibYell.decodeYellInfo({ encodedYellInfo: encodedYellInfo });
 
         uint64 from = LibRegister.getAddressId({ accountAddress: _msgSender() });

@@ -18,7 +18,7 @@ contract YellSystemTest is YellTest {
         vm.prank(b);
         world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
 
-        uint256 dataCommitment = 123;
+        bytes32 dataCommitment = bytes32(uint256(123));
         YellInfo memory yellInfo =
             YellInfo({ endValue: 0, lifeSeconds: 100, to: LibRegister.getAddressId({ accountAddress: b }) });
         uint136 encodedYellInfo = world.encodeYellInfo({ yellInfo: yellInfo });
@@ -44,7 +44,7 @@ contract YellSystemTest is YellTest {
         uint256 startValue,
         uint40 endValue,
         uint32 lifeSeconds,
-        uint256 dataCommitment,
+        bytes32 dataCommitment,
         uint160 startTimestamp
     )
         public
@@ -90,7 +90,7 @@ contract YellSystemTest is YellTest {
         vm.prank(b);
         world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
 
-        uint256 dataCommitment = 123;
+        bytes32 dataCommitment = bytes32(uint256(123));
         YellInfo memory yellInfo =
             YellInfo({ endValue: 0, lifeSeconds: 100, to: LibRegister.getAddressId({ accountAddress: b }) });
         uint136 encodedYellInfo = world.encodeYellInfo({ yellInfo: yellInfo });
@@ -106,7 +106,7 @@ contract YellSystemTest is YellTest {
         uint256 startValue,
         uint40 endValue,
         uint32 lifeSeconds,
-        uint256 dataCommitment,
+        bytes32 dataCommitment,
         uint160 startTimestamp
     )
         public
@@ -139,7 +139,7 @@ contract YellSystemTest is YellTest {
         vm.prank(a);
         world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
 
-        uint256 dataCommitment = 123;
+        bytes32 dataCommitment = bytes32(uint256(123));
         YellInfo memory yellInfo =
             YellInfo({ endValue: 0, lifeSeconds: 100, to: LibRegister.getAddressId({ accountAddress: b }) });
         uint136 encodedYellInfo = world.encodeYellInfo({ yellInfo: yellInfo });
@@ -155,7 +155,7 @@ contract YellSystemTest is YellTest {
         uint256 startValue,
         uint40 endValue,
         uint32 lifeSeconds,
-        uint256 dataCommitment,
+        bytes32 dataCommitment,
         uint160 startTimestamp
     )
         public
@@ -190,7 +190,7 @@ contract YellSystemTest is YellTest {
         vm.prank(b);
         world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
 
-        uint256 dataCommitment = 123;
+        bytes32 dataCommitment = bytes32(uint256(123));
         YellInfo memory yellInfo =
             YellInfo({ endValue: 101, lifeSeconds: 100, to: LibRegister.getAddressId({ accountAddress: b }) });
         uint136 encodedYellInfo = world.encodeYellInfo({ yellInfo: yellInfo });
@@ -206,7 +206,7 @@ contract YellSystemTest is YellTest {
         uint256 startValue,
         uint40 endValue,
         uint32 lifeSeconds,
-        uint256 dataCommitment,
+        bytes32 dataCommitment,
         uint160 startTimestamp
     )
         public

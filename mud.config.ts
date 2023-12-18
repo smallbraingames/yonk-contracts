@@ -40,7 +40,7 @@ export default mudConfig({
         Yell: {
             keySchema: { id: "uint64" },
             valueSchema: {
-                dataCommitment: "uint256",
+                dataCommitment: "bytes32",
                 startValue: "uint256",
                 endValue: "uint256",
                 lifeSeconds: "uint256",
