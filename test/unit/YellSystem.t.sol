@@ -35,6 +35,7 @@ contract YellSystemTest is YellTest {
         assertEq(yellData.from, LibRegister.getAddressId({ accountAddress: a }));
         assertEq(yellData.to, LibRegister.getAddressId({ accountAddress: b }));
         assertEq(yellData.claimed, false);
+        assertEq(address(worldAddress).balance, 100);
     }
 
     function testFuzz_CorrectlySetsYell(
@@ -79,6 +80,7 @@ contract YellSystemTest is YellTest {
         assertEq(yellData.from, LibRegister.getAddressId({ accountAddress: from }));
         assertEq(yellData.to, LibRegister.getAddressId({ accountAddress: to }));
         assertEq(yellData.claimed, false);
+        assertEq(address(worldAddress).balance, startValue);
     }
 
     function test_RevertsWhen_FromNotRegistered() public {
