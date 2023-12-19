@@ -37,7 +37,8 @@ contract LibClaimTest is YellTest {
     }
 
     function test_VerifySignature() public {
-        // P256 Vectors taken from Daimo https://github.com/daimo-eth/p256-verifier/blob/master/test-vectors/generate_random_valid.ts (MIT License)
+        // P256 Vectors taken from Daimo
+        // https://github.com/daimo-eth/p256-verifier/blob/master/test-vectors/generate_random_valid.ts (MIT License)
         string memory file = "./test/p256-test-vectors/vectors_random_valid.jsonl";
 
         while (true) {
@@ -50,8 +51,8 @@ contract LibClaimTest is YellTest {
             uint256 r = uint256(vector.readBytes32(".r"));
             uint256 s = uint256(vector.readBytes32(".s"));
             bytes32 hash = vector.readBytes32(".hash");
-            assertTrue(LibClaim.isValidSignature({ dataCommitment: hash, r: r, s: s, x: x, y: y }));
-            assertFalse(LibClaim.isValidSignature({ dataCommitment: hash, r: r, s: s, x: x + 1, y: y }));
+            assertTrue(LibClaim.isValidSignature({ messageHash: hash, r: r, s: s, x: x, y: y }));
+            assertFalse(LibClaim.isValidSignature({ messageHash: hash, r: r, s: s, x: x + 1, y: y }));
         }
     }
 
