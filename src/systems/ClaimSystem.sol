@@ -15,7 +15,7 @@ contract ClaimSystem is System {
     error NotYourYell();
     error YellExpired();
 
-    function claim(uint256 dataCommitmentPreimage, uint256 signatureR, uint256 signatureS, uint64 yellId) public {
+    function claim(bytes32 dataCommitmentPreimage, uint256 signatureR, uint256 signatureS, uint64 yellId) public {
         YellData memory yellData = Yell.get({ id: yellId });
 
         if (yellData.claimed) {
@@ -44,7 +44,7 @@ contract ClaimSystem is System {
         RegistrationData memory registrationData = Registration.get({ id: toId });
         if (
             !LibClaim.isValidSignature({
-                dataCommitment: dataCommitment,
+                messageHash: dataCommitmentPreimage,
                 r: signatureR,
                 s: signatureS,
                 x: registrationData.devicePublicKeyX,

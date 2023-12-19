@@ -11,7 +11,7 @@ import { LibRegister } from "libraries/LibRegister.sol";
 contract RegisterSystem is System {
     error AlreadyRegistered();
 
-    function register(uint256 devicePublicKeyX, uint256 devicePublicKeyY) public {
+    function register(uint256 devicePublicKeyX, uint256 devicePublicKeyY) public returns (uint64) {
         uint64 id = LibId.getId({ world: IWorld(_world()) });
         address accountAddress = _msgSender();
         if (LibRegister.isRegistered({ accountAddress: accountAddress })) {
@@ -19,5 +19,6 @@ contract RegisterSystem is System {
         }
         Registration.set({ id: id, devicePublicKeyX: devicePublicKeyX, devicePublicKeyY: devicePublicKeyY });
         RegisteredAddress.set({ id: id, value: accountAddress });
+        return id;
     }
 }
