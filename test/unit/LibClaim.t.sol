@@ -49,9 +49,10 @@ contract LibClaimTest is YellTest {
             uint256 y = uint256(vector.readBytes32(".y"));
             uint256 r = uint256(vector.readBytes32(".r"));
             uint256 s = uint256(vector.readBytes32(".s"));
-            bytes32 hash = vector.readBytes32(".hash");
-            assertTrue(LibClaim.isValidSignature({ messageHash: hash, r: r, s: s, x: x, y: y }));
-            assertFalse(LibClaim.isValidSignature({ messageHash: hash, r: r, s: s, x: x + 1, y: y }));
+            bytes32 data = vector.readBytes32(".data");
+            bytes32 messageHash = sha256(abi.encodePacked(data));
+            assertTrue(LibClaim.isValidSignature({ messageHash: messageHash, r: r, s: s, x: x, y: y }));
+            assertFalse(LibClaim.isValidSignature({ messageHash: messageHash, r: r, s: s, x: x + 1, y: y }));
         }
     }
 

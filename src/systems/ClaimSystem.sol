@@ -44,7 +44,7 @@ contract ClaimSystem is System {
         RegistrationData memory registrationData = Registration.get({ id: toId });
         if (
             !LibClaim.isValidSignature({
-                messageHash: dataCommitmentPreimage,
+                messageHash: sha256(abi.encodePacked(dataCommitmentPreimage)),
                 r: signatureR,
                 s: signatureS,
                 x: registrationData.devicePublicKeyX,
