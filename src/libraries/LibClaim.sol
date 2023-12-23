@@ -19,7 +19,7 @@ library LibClaim {
         view
         returns (bool)
     {
-        return P256.verifySignatureAllowMalleability({ message_hash: messageHash, r: r, s: s, x: x, y: y });
+        return P256.verifySignature({ message_hash: messageHash, r: r, s: s, x: x, y: y });
     }
 
     function getYellAmount(

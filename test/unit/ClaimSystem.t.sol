@@ -2,7 +2,7 @@
 pragma solidity >=0.8.21;
 
 import { ClaimSystem } from "../../src/systems/ClaimSystem.sol";
-import { YellTest } from "../YellTest.t.sol";
+import { YellTest, console } from "../YellTest.t.sol";
 
 import { Yell } from "codegen/index.sol";
 import { YellInfo } from "common/YellInfo.sol";
@@ -27,7 +27,9 @@ contract ClaimSystemTest is YellTest {
         vm.deal(sender, 200);
         YellInfo memory yellInfo = YellInfo({ endValue: 0, lifeSeconds: 200, to: receiverId });
 
-        bytes32 dataCommitmentPreimage = sha256(abi.encodePacked(bytes6(0xdeadbeef0000)));
+        console.logBytes(abi.encodePacked(bytes32(bytes6(0xdeadbeef0000))));
+        console.logBytes(abi.encodePacked(bytes6(0xdeadbeef0000)));
+        bytes32 dataCommitmentPreimage = sha256(abi.encodePacked(bytes32(bytes6(0xdeadbeef0000))));
         bytes32 dataCommitment = keccak256(abi.encodePacked(dataCommitmentPreimage));
 
         uint136 encodedYellInfo = world.encodeYellInfo({ yellInfo: yellInfo });
@@ -45,7 +47,7 @@ contract ClaimSystemTest is YellTest {
         assertEq(address(sender).balance, 100);
         assertTrue(Yell.getClaimed({ id: yellId }));
     }
-
+  
     function test_RevertsWhen_DuplicateClaim() public {
         address sender = address(0xbeef);
         uint256 senderDevicePublicKeyX = 12;

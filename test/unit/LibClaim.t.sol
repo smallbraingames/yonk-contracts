@@ -37,8 +37,7 @@ contract LibClaimTest is YellTest {
     }
 
     function test_VerifySignature() public {
-        // P256 Vectors taken from Daimo
-        // https://github.com/daimo-eth/p256-verifier/blob/master/test-vectors/generate_random_valid.ts (MIT License)
+        // P256 Vectors generated in test/p256-test-vectors/gen.ts
         string memory file = "./test/p256-test-vectors/vectors_random_valid.jsonl";
 
         while (true) {
