@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.21;
 
-import { YellTest } from "../YellTest.t.sol";
+import { YonkTest } from "../YonkTest.t.sol";
 
-contract DeployTest is YellTest {
+contract DeployTest is YonkTest {
     function test_WorldExists() public {
         uint256 codeSize;
         address addr = worldAddress;

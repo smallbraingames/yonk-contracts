@@ -2,10 +2,10 @@
 pragma solidity >=0.8.21;
 
 import { RegisterSystem } from "../../src/systems/RegisterSystem.sol";
-import { YellTest } from "../YellTest.t.sol";
+import { YonkTest } from "../YonkTest.t.sol";
 import { RegisteredAddress, Registration, RegistrationData } from "codegen/index.sol";
 
-contract RegisterSystemTest is YellTest {
+contract RegisterSystemTest is YonkTest {
     function test_RegistersCorrectly() public {
         address sender = address(0xface);
         uint256 devicePublicKeyX = 234;

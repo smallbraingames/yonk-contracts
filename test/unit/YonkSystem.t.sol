@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.21;
 
-import { YellSystem } from "../../src/systems/YellSystem.sol";
-import { YellTest } from "../YellTest.t.sol";
+import { YonkSystem } from "../../src/systems/YonkSystem.sol";
+import { YonkTest } from "../YonkTest.t.sol";
 
-import { Yell, YellData } from "codegen/index.sol";
-import { YellInfo } from "common/YellInfo.sol";
+import { Yonk, YonkData } from "codegen/index.sol";
+import { YonkInfo } from "common/YonkInfo.sol";
 import { LibRegister } from "libraries/LibRegister.sol";
 
-contract YellSystemTest is YellTest {
-    function test_CorrectlySetsYell() public {
+contract YonkSystemTest is YonkTest {
+    function test_CorrectlySetsYonk() public {
         address a = address(0xface);
         address b = address(0xdead);
 
@@ -19,26 +19,26 @@ contract YellSystemTest is YellTest {
         world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
 
         bytes32 dataCommitment = bytes32(uint256(123));
-        YellInfo memory yellInfo =
-            YellInfo({ endValue: 0, lifeSeconds: 100, to: LibRegister.getAddressId({ accountAddress: b }) });
-        uint136 encodedYellInfo = world.encodeYellInfo({ yellInfo: yellInfo });
+        YonkInfo memory yonkInfo =
+            YonkInfo({ endValue: 0, lifeSeconds: 100, to: LibRegister.getAddressId({ accountAddress: b }) });
+        uint136 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
         vm.deal(a, 100);
         vm.prank(a);
-        uint64 yellId = world.yell{ value: 100 }({ dataCommitment: dataCommitment, encodedYellInfo: encodedYellInfo });
+        uint64 yonkId = world.yonk{ value: 100 }({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo });
 
-        YellData memory yellData = Yell.get({ id: yellId });
-        assertEq(yellData.dataCommitment, dataCommitment);
-        assertEq(yellData.startValue, 100);
-        assertEq(yellData.endValue, yellInfo.endValue);
-        assertEq(yellData.lifeSeconds, yellInfo.lifeSeconds);
-        assertEq(yellData.startTimestamp, block.timestamp);
-        assertEq(yellData.from, LibRegister.getAddressId({ accountAddress: a }));
-        assertEq(yellData.to, LibRegister.getAddressId({ accountAddress: b }));
-        assertEq(yellData.claimed, false);
+        YonkData memory yonkData = Yonk.get({ id: yonkId });
+        assertEq(yonkData.dataCommitment, dataCommitment);
+        assertEq(yonkData.startValue, 100);
+        assertEq(yonkData.endValue, yonkInfo.endValue);
+        assertEq(yonkData.lifeSeconds, yonkInfo.lifeSeconds);
+        assertEq(yonkData.startTimestamp, block.timestamp);
+        assertEq(yonkData.from, LibRegister.getAddressId({ accountAddress: a }));
+        assertEq(yonkData.to, LibRegister.getAddressId({ accountAddress: b }));
+        assertEq(yonkData.claimed, false);
         assertEq(address(worldAddress).balance, 100);
     }
 
-    function testFuzz_CorrectlySetsYell(
+    function testFuzz_CorrectlySetsYonk(
         address from,
         address to,
         uint256 startValue,
@@ -59,27 +59,27 @@ contract YellSystemTest is YellTest {
         vm.prank(to);
         world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
 
-        YellInfo memory yellInfo = YellInfo({
+        YonkInfo memory yonkInfo = YonkInfo({
             endValue: endValue,
             lifeSeconds: lifeSeconds,
             to: LibRegister.getAddressId({ accountAddress: to })
         });
-        uint136 encodedYellInfo = world.encodeYellInfo({ yellInfo: yellInfo });
+        uint136 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
         vm.deal(from, startValue);
         vm.warp(startTimestamp);
         vm.prank(from);
-        uint64 yellId =
-            world.yell{ value: startValue }({ dataCommitment: dataCommitment, encodedYellInfo: encodedYellInfo });
+        uint64 yonkId =
+            world.yonk{ value: startValue }({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo });
 
-        YellData memory yellData = Yell.get({ id: yellId });
-        assertEq(yellData.dataCommitment, dataCommitment);
-        assertEq(yellData.startValue, startValue);
-        assertEq(yellData.endValue, yellInfo.endValue);
-        assertEq(yellData.lifeSeconds, yellInfo.lifeSeconds);
-        assertEq(yellData.startTimestamp, startTimestamp);
-        assertEq(yellData.from, LibRegister.getAddressId({ accountAddress: from }));
-        assertEq(yellData.to, LibRegister.getAddressId({ accountAddress: to }));
-        assertEq(yellData.claimed, false);
+        YonkData memory yonkData = Yonk.get({ id: yonkId });
+        assertEq(yonkData.dataCommitment, dataCommitment);
+        assertEq(yonkData.startValue, startValue);
+        assertEq(yonkData.endValue, yonkInfo.endValue);
+        assertEq(yonkData.lifeSeconds, yonkInfo.lifeSeconds);
+        assertEq(yonkData.startTimestamp, startTimestamp);
+        assertEq(yonkData.from, LibRegister.getAddressId({ accountAddress: from }));
+        assertEq(yonkData.to, LibRegister.getAddressId({ accountAddress: to }));
+        assertEq(yonkData.claimed, false);
         assertEq(address(worldAddress).balance, startValue);
     }
 
@@ -91,13 +91,13 @@ contract YellSystemTest is YellTest {
         world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
 
         bytes32 dataCommitment = bytes32(uint256(123));
-        YellInfo memory yellInfo =
-            YellInfo({ endValue: 0, lifeSeconds: 100, to: LibRegister.getAddressId({ accountAddress: b }) });
-        uint136 encodedYellInfo = world.encodeYellInfo({ yellInfo: yellInfo });
+        YonkInfo memory yonkInfo =
+            YonkInfo({ endValue: 0, lifeSeconds: 100, to: LibRegister.getAddressId({ accountAddress: b }) });
+        uint136 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
         vm.deal(a, 100);
         vm.prank(a);
-        vm.expectRevert(YellSystem.NotRegistered.selector);
-        world.yell{ value: 100 }({ dataCommitment: dataCommitment, encodedYellInfo: encodedYellInfo });
+        vm.expectRevert(YonkSystem.NotRegistered.selector);
+        world.yonk{ value: 100 }({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo });
     }
 
     function testFuzz_RevertsWhen_FromNotRegistered(
@@ -119,17 +119,17 @@ contract YellSystemTest is YellTest {
         vm.prank(to);
         world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
 
-        YellInfo memory yellInfo = YellInfo({
+        YonkInfo memory yonkInfo = YonkInfo({
             endValue: endValue,
             lifeSeconds: lifeSeconds,
             to: LibRegister.getAddressId({ accountAddress: to })
         });
-        uint136 encodedYellInfo = world.encodeYellInfo({ yellInfo: yellInfo });
+        uint136 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
         vm.deal(from, startValue);
         vm.warp(startTimestamp);
         vm.prank(from);
-        vm.expectRevert(YellSystem.NotRegistered.selector);
-        world.yell{ value: startValue }({ dataCommitment: dataCommitment, encodedYellInfo: encodedYellInfo });
+        vm.expectRevert(YonkSystem.NotRegistered.selector);
+        world.yonk{ value: startValue }({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo });
     }
 
     function test_RevertsWhen_ToNotRegistered() public {
@@ -140,13 +140,13 @@ contract YellSystemTest is YellTest {
         world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
 
         bytes32 dataCommitment = bytes32(uint256(123));
-        YellInfo memory yellInfo =
-            YellInfo({ endValue: 0, lifeSeconds: 100, to: LibRegister.getAddressId({ accountAddress: b }) });
-        uint136 encodedYellInfo = world.encodeYellInfo({ yellInfo: yellInfo });
+        YonkInfo memory yonkInfo =
+            YonkInfo({ endValue: 0, lifeSeconds: 100, to: LibRegister.getAddressId({ accountAddress: b }) });
+        uint136 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
         vm.deal(a, 100);
         vm.prank(a);
-        vm.expectRevert(YellSystem.NotRegistered.selector);
-        world.yell{ value: 100 }({ dataCommitment: dataCommitment, encodedYellInfo: encodedYellInfo });
+        vm.expectRevert(YonkSystem.NotRegistered.selector);
+        world.yonk{ value: 100 }({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo });
     }
 
     function testFuzz_RevertsWhen_ToNotRegistered(
@@ -168,17 +168,17 @@ contract YellSystemTest is YellTest {
         vm.prank(from);
         world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
 
-        YellInfo memory yellInfo = YellInfo({
+        YonkInfo memory yonkInfo = YonkInfo({
             endValue: endValue,
             lifeSeconds: lifeSeconds,
             to: LibRegister.getAddressId({ accountAddress: to })
         });
-        uint136 encodedYellInfo = world.encodeYellInfo({ yellInfo: yellInfo });
+        uint136 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
         vm.deal(from, startValue);
         vm.warp(startTimestamp);
         vm.prank(from);
-        vm.expectRevert(YellSystem.NotRegistered.selector);
-        world.yell{ value: startValue }({ dataCommitment: dataCommitment, encodedYellInfo: encodedYellInfo });
+        vm.expectRevert(YonkSystem.NotRegistered.selector);
+        world.yonk{ value: startValue }({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo });
     }
 
     function test_RevertsWhen_EndValueGreaterThanStart() public {
@@ -191,13 +191,13 @@ contract YellSystemTest is YellTest {
         world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
 
         bytes32 dataCommitment = bytes32(uint256(123));
-        YellInfo memory yellInfo =
-            YellInfo({ endValue: 101, lifeSeconds: 100, to: LibRegister.getAddressId({ accountAddress: b }) });
-        uint136 encodedYellInfo = world.encodeYellInfo({ yellInfo: yellInfo });
+        YonkInfo memory yonkInfo =
+            YonkInfo({ endValue: 101, lifeSeconds: 100, to: LibRegister.getAddressId({ accountAddress: b }) });
+        uint136 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
         vm.deal(a, 100);
         vm.prank(a);
-        vm.expectRevert(YellSystem.EndValueGreaterThanStart.selector);
-        world.yell{ value: 100 }({ dataCommitment: dataCommitment, encodedYellInfo: encodedYellInfo });
+        vm.expectRevert(YonkSystem.EndValueGreaterThanStart.selector);
+        world.yonk{ value: 100 }({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo });
     }
 
     function testFuzz_RevertsWhen_EndValueGreaterThanStart(
@@ -221,22 +221,22 @@ contract YellSystemTest is YellTest {
         vm.prank(to);
         world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
 
-        YellInfo memory yellInfo = YellInfo({
+        YonkInfo memory yonkInfo = YonkInfo({
             endValue: endValue,
             lifeSeconds: lifeSeconds,
             to: LibRegister.getAddressId({ accountAddress: to })
         });
-        uint136 encodedYellInfo = world.encodeYellInfo({ yellInfo: yellInfo });
+        uint136 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
         vm.deal(from, startValue);
         vm.warp(startTimestamp);
         vm.prank(from);
-        vm.expectRevert(YellSystem.EndValueGreaterThanStart.selector);
-        world.yell{ value: startValue }({ dataCommitment: dataCommitment, encodedYellInfo: encodedYellInfo });
+        vm.expectRevert(YonkSystem.EndValueGreaterThanStart.selector);
+        world.yonk{ value: startValue }({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo });
     }
 
     function test_RevertsWhen_EncodingOverflows() public {
-        YellInfo memory yellInfo = YellInfo({ endValue: 2 ** 253, lifeSeconds: 0, to: 0 });
-        vm.expectRevert(YellSystem.UnsafeCast.selector);
-        world.encodeYellInfo({ yellInfo: yellInfo });
+        YonkInfo memory yonkInfo = YonkInfo({ endValue: 2 ** 253, lifeSeconds: 0, to: 0 });
+        vm.expectRevert(YonkSystem.UnsafeCast.selector);
+        world.encodeYonkInfo({ yonkInfo: yonkInfo });
     }
 }

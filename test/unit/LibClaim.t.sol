@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.21;
 
-import { YellTest, console } from "../YellTest.t.sol";
+import { YonkTest, console } from "../YonkTest.t.sol";
 
 import { stdJson } from "forge-std/StdJson.sol";
 import { LibClaim } from "libraries/LibClaim.sol";
 
 using stdJson for string;
 
-contract LibClaimTest is YellTest {
+contract LibClaimTest is YonkTest {
     function test_IsAliveTrueWhenAlive() public {
         assertTrue(LibClaim.isAlive({ startTimestamp: block.timestamp, lifeSeconds: 100 }));
         assertTrue(LibClaim.isAlive({ startTimestamp: block.timestamp, lifeSeconds: 1 }));
@@ -56,13 +56,13 @@ contract LibClaimTest is YellTest {
         }
     }
 
-    function test_GetYellAmount() public {
+    function test_GetYonkAmount() public {
         assertEq(
-            LibClaim.getYellAmount({ startValue: 100, endValue: 0, startTimestamp: block.timestamp, lifeSeconds: 10 }),
+            LibClaim.getYonkAmount({ startValue: 100, endValue: 0, startTimestamp: block.timestamp, lifeSeconds: 10 }),
             100
         );
         assertEq(
-            LibClaim.getYellAmount({
+            LibClaim.getYonkAmount({
                 startValue: 500,
                 endValue: 500,
                 startTimestamp: block.timestamp - 99,
@@ -71,7 +71,7 @@ contract LibClaimTest is YellTest {
             500
         );
         assertEq(
-            LibClaim.getYellAmount({
+            LibClaim.getYonkAmount({
                 startValue: 500,
                 endValue: 0,
                 startTimestamp: block.timestamp - 100,
@@ -81,22 +81,22 @@ contract LibClaimTest is YellTest {
         );
     }
 
-    function testFuzz_GetYellAmount(uint160 yellAmount, uint160 startValue, uint160 endValue) public {
-        vm.assume(startValue >= yellAmount);
-        vm.assume(endValue <= yellAmount);
-        vm.assume(uint256(startValue) - uint256(yellAmount) < 1e15);
-        uint256 diff = uint256(startValue) - uint256(yellAmount);
+    function testFuzz_GetYonkAmount(uint160 yonkAmount, uint160 startValue, uint160 endValue) public {
+        vm.assume(startValue >= yonkAmount);
+        vm.assume(endValue <= yonkAmount);
+        vm.assume(uint256(startValue) - uint256(yonkAmount) < 1e15);
+        uint256 diff = uint256(startValue) - uint256(yonkAmount);
         uint256 lifeSeconds = uint256(startValue) - uint256(endValue);
         if (lifeSeconds == 0) lifeSeconds++;
         vm.warp(diff + 10);
         assertEq(
-            LibClaim.getYellAmount({
+            LibClaim.getYonkAmount({
                 startValue: startValue,
                 endValue: endValue,
                 startTimestamp: 10,
                 lifeSeconds: lifeSeconds
             }),
-            yellAmount
+            yonkAmount
         );
     }
 }

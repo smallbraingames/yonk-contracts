@@ -2,7 +2,7 @@
 pragma solidity >=0.8.21;
 
 import { System } from "@latticexyz/world/src/System.sol";
-import { RegisteredAddress, Registration, RegistrationData, Yell, YellData } from "codegen/index.sol";
+import { RegisteredAddress, Registration, RegistrationData, Yonk, YonkData } from "codegen/index.sol";
 
 import { LibClaim } from "libraries/LibClaim.sol";
 import { LibRegister } from "libraries/LibRegister.sol";
@@ -12,13 +12,13 @@ contract ClaimSystem is System {
     error ClaimerNotRegistered();
     error IncorrectData();
     error InvalidSignature();
-    error NotYourYell();
-    error YellExpired();
+    error NotYourYonk();
+    error YonkExpired();
 
-    function claim(bytes32 dataCommitmentPreimage, uint256 signatureR, uint256 signatureS, uint64 yellId) public {
-        YellData memory yellData = Yell.get({ id: yellId });
+    function claim(bytes32 dataCommitmentPreimage, uint256 signatureR, uint256 signatureS, uint64 yonkId) public {
+        YonkData memory yonkData = Yonk.get({ id: yonkId });
 
-        if (yellData.claimed) {
+        if (yonkData.claimed) {
             revert AlreadyClaimed();
         }
 
@@ -28,17 +28,17 @@ contract ClaimSystem is System {
         }
 
         uint64 toId = LibRegister.getAddressId({ accountAddress: toAddress });
-        if (yellData.to != toId) {
-            revert NotYourYell();
+        if (yonkData.to != toId) {
+            revert NotYourYonk();
         }
 
         bytes32 dataCommitment = keccak256(abi.encodePacked(dataCommitmentPreimage));
-        if (yellData.dataCommitment != dataCommitment) {
+        if (yonkData.dataCommitment != dataCommitment) {
             revert IncorrectData();
         }
 
-        if (!LibClaim.isAlive({ startTimestamp: yellData.startTimestamp, lifeSeconds: yellData.lifeSeconds })) {
-            revert YellExpired();
+        if (!LibClaim.isAlive({ startTimestamp: yonkData.startTimestamp, lifeSeconds: yonkData.lifeSeconds })) {
+            revert YonkExpired();
         }
 
         RegistrationData memory registrationData = Registration.get({ id: toId });
@@ -54,18 +54,18 @@ contract ClaimSystem is System {
             revert InvalidSignature();
         }
 
-        Yell.setClaimed({ id: yellId, claimed: true });
+        Yonk.setClaimed({ id: yonkId, claimed: true });
 
-        uint256 yellAmount = LibClaim.getYellAmount({
-            startValue: yellData.startValue,
-            endValue: yellData.endValue,
-            startTimestamp: yellData.startTimestamp,
-            lifeSeconds: yellData.lifeSeconds
+        uint256 yonkAmount = LibClaim.getYonkAmount({
+            startValue: yonkData.startValue,
+            endValue: yonkData.endValue,
+            startTimestamp: yonkData.startTimestamp,
+            lifeSeconds: yonkData.lifeSeconds
         });
 
-        uint256 returnAmount = yellData.startValue - yellAmount;
-        address fromAddress = RegisteredAddress.get({ id: yellData.from });
-        payable(toAddress).transfer(yellAmount);
+        uint256 returnAmount = yonkData.startValue - yonkAmount;
+        address fromAddress = RegisteredAddress.get({ id: yonkData.from });
+        payable(toAddress).transfer(yonkAmount);
         if (returnAmount > 0) {
             payable(fromAddress).transfer(returnAmount);
         }
