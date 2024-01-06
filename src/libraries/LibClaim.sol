@@ -22,7 +22,7 @@ library LibClaim {
         return P256.verifySignature({ message_hash: messageHash, r: r, s: s, x: x, y: y });
     }
 
-    function getYellAmount(
+    function getYonkAmount(
         uint256 startValue,
         uint256 endValue,
         uint256 startTimestamp,

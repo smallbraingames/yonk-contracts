@@ -7,7 +7,7 @@ import "forge-std/Test.sol";
 import { P256 } from "p256-verifier/P256.sol";
 import { P256Verifier } from "p256-verifier/P256Verifier.sol";
 
-contract YellTest is MudTest {
+contract YonkTest is MudTest {
     IWorld public world;
 
     function setUp() public override {

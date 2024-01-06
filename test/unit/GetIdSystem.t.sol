@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.21;
 
-import { YellTest } from "../YellTest.t.sol";
+import { YonkTest } from "../YonkTest.t.sol";
 import { Id } from "codegen/index.sol";
 
-contract GetIdSystemTest is YellTest {
+contract GetIdSystemTest is YonkTest {
     function test_IncrementsId() public {
         assertEq(Id.get(), 0);
         world.register({ devicePublicKeyX: 0, devicePublicKeyY: 0 });

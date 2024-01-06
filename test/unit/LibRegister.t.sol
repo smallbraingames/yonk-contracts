@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.21;
 
-import { YellTest } from "../YellTest.t.sol";
+import { YonkTest } from "../YonkTest.t.sol";
 
 import { RegisteredAddress, Registration } from "codegen/index.sol";
 import { LibRegister } from "libraries/LibRegister.sol";
 
-contract LibRegisterTest is YellTest {
+contract LibRegisterTest is YonkTest {
     function test_IsRegisteredTrueWhenRegistered() public {
         address accountAddress = address(0xface);
         vm.prank(accountAddress);

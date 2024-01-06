@@ -2,12 +2,12 @@
 pragma solidity >=0.8.21;
 
 import { ClaimSystem } from "../../src/systems/ClaimSystem.sol";
-import { YellTest, console } from "../YellTest.t.sol";
+import { YonkTest, console } from "../YonkTest.t.sol";
 
-import { Yell } from "codegen/index.sol";
-import { YellInfo } from "common/YellInfo.sol";
+import { Yonk } from "codegen/index.sol";
+import { YonkInfo } from "common/YonkInfo.sol";
 
-contract ClaimSystemTest is YellTest {
+contract ClaimSystemTest is YonkTest {
     function test_Claim() public {
         address sender = address(0xface);
         uint256 senderDevicePublicKeyX = 12;
@@ -26,26 +26,26 @@ contract ClaimSystemTest is YellTest {
             world.register({ devicePublicKeyX: receiverDevicePublicKeyX, devicePublicKeyY: receiverDevicePublicKeyY });
 
         vm.deal(sender, 200);
-        YellInfo memory yellInfo = YellInfo({ endValue: 0, lifeSeconds: 200, to: receiverId });
+        YonkInfo memory yonkInfo = YonkInfo({ endValue: 0, lifeSeconds: 200, to: receiverId });
 
         string memory data = "deadbeef0000";
         bytes32 dataCommitmentPreimage = keccak256(abi.encodePacked(data));
         bytes32 dataCommitment = keccak256(abi.encodePacked(dataCommitmentPreimage));
 
-        uint136 encodedYellInfo = world.encodeYellInfo({ yellInfo: yellInfo });
+        uint136 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
         vm.prank(sender);
-        uint64 yellId = world.yell{ value: 200 }({ dataCommitment: dataCommitment, encodedYellInfo: encodedYellInfo });
+        uint64 yonkId = world.yonk{ value: 200 }({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo });
 
         uint256 r = uint256(bytes32(0x5e78453b05f2776f817ff1f0b108c096e79d073a90de23f176c8378ed6366049));
         uint256 s = uint256(bytes32(0x336d9099a139f73c8298aeb0d6fa1d1248889e1bc1de34c0b551be43902d81a3));
 
         vm.warp(block.timestamp + 100);
         vm.prank(receiver);
-        world.claim({ dataCommitmentPreimage: dataCommitmentPreimage, signatureR: r, signatureS: s, yellId: yellId });
+        world.claim({ dataCommitmentPreimage: dataCommitmentPreimage, signatureR: r, signatureS: s, yonkId: yonkId });
 
         assertEq(address(receiver).balance, 100);
         assertEq(address(sender).balance, 100);
-        assertTrue(Yell.getClaimed({ id: yellId }));
+        assertTrue(Yonk.getClaimed({ id: yonkId }));
     }
 
     function test_RevertsWhen_DuplicateClaim() public {
@@ -65,26 +65,26 @@ contract ClaimSystemTest is YellTest {
             world.register({ devicePublicKeyX: receiverDevicePublicKeyX, devicePublicKeyY: receiverDevicePublicKeyY });
 
         vm.deal(sender, 500);
-        YellInfo memory yellInfo = YellInfo({ endValue: 0, lifeSeconds: 200, to: receiverId });
+        YonkInfo memory yonkInfo = YonkInfo({ endValue: 0, lifeSeconds: 200, to: receiverId });
 
         string memory data = "deadbeef0000";
         bytes32 dataCommitmentPreimage = keccak256(abi.encodePacked(data));
         bytes32 dataCommitment = keccak256(abi.encodePacked(dataCommitmentPreimage));
 
-        uint136 encodedYellInfo = world.encodeYellInfo({ yellInfo: yellInfo });
+        uint136 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
         vm.prank(sender);
-        uint64 yellId = world.yell{ value: 500 }({ dataCommitment: dataCommitment, encodedYellInfo: encodedYellInfo });
+        uint64 yonkId = world.yonk{ value: 500 }({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo });
 
         uint256 r = uint256(bytes32(0x5e78453b05f2776f817ff1f0b108c096e79d073a90de23f176c8378ed6366049));
         uint256 s = uint256(bytes32(0x336d9099a139f73c8298aeb0d6fa1d1248889e1bc1de34c0b551be43902d81a3));
 
         vm.warp(block.timestamp + 100);
         vm.prank(receiver);
-        world.claim({ dataCommitmentPreimage: dataCommitmentPreimage, signatureR: r, signatureS: s, yellId: yellId });
+        world.claim({ dataCommitmentPreimage: dataCommitmentPreimage, signatureR: r, signatureS: s, yonkId: yonkId });
 
         vm.expectRevert(ClaimSystem.AlreadyClaimed.selector);
         vm.prank(receiver);
-        world.claim({ dataCommitmentPreimage: dataCommitmentPreimage, signatureR: r, signatureS: s, yellId: yellId });
+        world.claim({ dataCommitmentPreimage: dataCommitmentPreimage, signatureR: r, signatureS: s, yonkId: yonkId });
     }
 
     function test_RevertsWhen_ClaimerNotRegistered() public {
@@ -104,15 +104,15 @@ contract ClaimSystemTest is YellTest {
             world.register({ devicePublicKeyX: receiverDevicePublicKeyX, devicePublicKeyY: receiverDevicePublicKeyY });
 
         vm.deal(sender, 500);
-        YellInfo memory yellInfo = YellInfo({ endValue: 0, lifeSeconds: 200, to: receiverId });
+        YonkInfo memory yonkInfo = YonkInfo({ endValue: 0, lifeSeconds: 200, to: receiverId });
 
         string memory data = "deadbeef0000";
         bytes32 dataCommitmentPreimage = keccak256(abi.encodePacked(data));
         bytes32 dataCommitment = keccak256(abi.encodePacked(dataCommitmentPreimage));
 
-        uint136 encodedYellInfo = world.encodeYellInfo({ yellInfo: yellInfo });
+        uint136 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
         vm.prank(sender);
-        uint64 yellId = world.yell{ value: 500 }({ dataCommitment: dataCommitment, encodedYellInfo: encodedYellInfo });
+        uint64 yonkId = world.yonk{ value: 500 }({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo });
 
         uint256 r = uint256(bytes32(0x5e78453b05f2776f817ff1f0b108c096e79d073a90de23f176c8378ed6366049));
         uint256 s = uint256(bytes32(0x336d9099a139f73c8298aeb0d6fa1d1248889e1bc1de34c0b551be43902d81a3));
@@ -120,7 +120,7 @@ contract ClaimSystemTest is YellTest {
         vm.warp(block.timestamp + 100);
         vm.prank(address(0xdead));
         vm.expectRevert(ClaimSystem.ClaimerNotRegistered.selector);
-        world.claim({ dataCommitmentPreimage: dataCommitmentPreimage, signatureR: r, signatureS: s, yellId: yellId });
+        world.claim({ dataCommitmentPreimage: dataCommitmentPreimage, signatureR: r, signatureS: s, yonkId: yonkId });
     }
 
     function test_RevertsWhen_IncorrectData() public {
@@ -140,7 +140,7 @@ contract ClaimSystemTest is YellTest {
             world.register({ devicePublicKeyX: receiverDevicePublicKeyX, devicePublicKeyY: receiverDevicePublicKeyY });
 
         vm.deal(sender, 500);
-        YellInfo memory yellInfo = YellInfo({ endValue: 0, lifeSeconds: 200, to: receiverId });
+        YonkInfo memory yonkInfo = YonkInfo({ endValue: 0, lifeSeconds: 200, to: receiverId });
 
         string memory data = "deadbeef0000";
         bytes32 dataCommitmentPreimage = keccak256(abi.encodePacked(data));
@@ -149,9 +149,9 @@ contract ClaimSystemTest is YellTest {
         string memory incorrectData = "deadbeef0001";
         bytes32 incorrectDataCommitmentPreimage = keccak256(abi.encodePacked(incorrectData));
 
-        uint136 encodedYellInfo = world.encodeYellInfo({ yellInfo: yellInfo });
+        uint136 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
         vm.prank(sender);
-        uint64 yellId = world.yell{ value: 500 }({ dataCommitment: dataCommitment, encodedYellInfo: encodedYellInfo });
+        uint64 yonkId = world.yonk{ value: 500 }({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo });
 
         uint256 r = uint256(bytes32(0x5e78453b05f2776f817ff1f0b108c096e79d073a90de23f176c8378ed6366049));
         uint256 s = uint256(bytes32(0x336d9099a139f73c8298aeb0d6fa1d1248889e1bc1de34c0b551be43902d81a3));
@@ -163,11 +163,11 @@ contract ClaimSystemTest is YellTest {
             dataCommitmentPreimage: incorrectDataCommitmentPreimage,
             signatureR: r,
             signatureS: s,
-            yellId: yellId
+            yonkId: yonkId
         });
     }
 
-    function test_RevertsWhen_YellExpired() public {
+    function test_RevertsWhen_YonkExpired() public {
         address sender = address(0xbeef);
         uint256 senderDevicePublicKeyX = 12;
         uint256 senderDevicePublicKeyY = 321;
@@ -184,22 +184,22 @@ contract ClaimSystemTest is YellTest {
             world.register({ devicePublicKeyX: receiverDevicePublicKeyX, devicePublicKeyY: receiverDevicePublicKeyY });
 
         vm.deal(sender, 500);
-        YellInfo memory yellInfo = YellInfo({ endValue: 0, lifeSeconds: 200, to: receiverId });
+        YonkInfo memory yonkInfo = YonkInfo({ endValue: 0, lifeSeconds: 200, to: receiverId });
 
         string memory data = "deadbeef0000";
         bytes32 dataCommitmentPreimage = keccak256(abi.encodePacked(data));
         bytes32 dataCommitment = keccak256(abi.encodePacked(dataCommitmentPreimage));
 
-        uint136 encodedYellInfo = world.encodeYellInfo({ yellInfo: yellInfo });
+        uint136 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
         vm.prank(sender);
-        uint64 yellId = world.yell{ value: 500 }({ dataCommitment: dataCommitment, encodedYellInfo: encodedYellInfo });
+        uint64 yonkId = world.yonk{ value: 500 }({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo });
 
         uint256 r = uint256(bytes32(0x5e78453b05f2776f817ff1f0b108c096e79d073a90de23f176c8378ed6366049));
         uint256 s = uint256(bytes32(0x336d9099a139f73c8298aeb0d6fa1d1248889e1bc1de34c0b551be43902d81a3));
 
         vm.warp(block.timestamp + 201);
         vm.prank(receiver);
-        vm.expectRevert(ClaimSystem.YellExpired.selector);
-        world.claim({ dataCommitmentPreimage: dataCommitmentPreimage, signatureR: r, signatureS: s, yellId: yellId });
+        vm.expectRevert(ClaimSystem.YonkExpired.selector);
+        world.claim({ dataCommitmentPreimage: dataCommitmentPreimage, signatureR: r, signatureS: s, yonkId: yonkId });
     }
 }

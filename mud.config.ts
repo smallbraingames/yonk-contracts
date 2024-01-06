@@ -8,12 +8,12 @@ export default mudConfig({
         },
         GetIdSystem: {
             openAccess: false,
-            accessList: ["RegisterSystem", "YellSystem"]
+            accessList: ["RegisterSystem", "YonkSystem"]
         },
         RegisterSystem: {
             openAccess: true,
         },
-        YellSystem: {
+        YonkSystem: {
             openAccess: true,
         },
     },
@@ -37,7 +37,7 @@ export default mudConfig({
                 value: "address",
             },
         },
-        Yell: {
+        Yonk: {
             keySchema: { id: "uint64" },
             valueSchema: {
                 dataCommitment: "bytes32",
