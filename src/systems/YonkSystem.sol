@@ -4,7 +4,6 @@ pragma solidity >=0.8.21;
 import { System } from "@latticexyz/world/src/System.sol";
 
 import { Yonk } from "codegen/index.sol";
-import { IWorld } from "codegen/world/IWorld.sol";
 import { YonkInfo } from "common/YonkInfo.sol";
 import { LibId } from "libraries/LibId.sol";
 import { LibRegister } from "libraries/LibRegister.sol";
@@ -33,7 +32,7 @@ contract YonkSystem is System {
             revert EndValueGreaterThanStart();
         }
 
-        uint64 id = LibId.getId({ world: IWorld(_world()) });
+        uint64 id = LibId.getId();
         Yonk.set({
             id: id,
             dataCommitment: dataCommitment,
