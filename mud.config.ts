@@ -10,8 +10,11 @@ export default mudConfig({
             openAccess: false,
             accessList: ["RegisterSystem", "YonkSystem"]
         },
-        RegisterSystem: {
+        HelperSystem: {
             openAccess: true,
+        },
+        RegisterSystem: {
+        openAccess: true,
         },
         YonkSystem: {
             openAccess: true,
