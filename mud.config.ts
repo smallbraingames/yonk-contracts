@@ -56,8 +56,8 @@ export default mudConfig({
         ClaimEvent: {
             keySchema: {id : "uint64"},
             valueSchema: {
-                valueClaimed: "uint256",
-                valueReturned: "uint256",
+                claimedValue: "uint256",
+                returnedValue: "uint256",
             },
             offchainOnly: true,
         }

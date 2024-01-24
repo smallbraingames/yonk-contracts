@@ -69,6 +69,6 @@ contract ClaimSystem is System {
         if (returnAmount > 0) {
             payable(fromAddress).transfer(returnAmount);
         }
-        ClaimEvent.set({id: yonkId, valueClaimed: yonkAmount, valueReturned: returnAmount});
+        ClaimEvent.set({id: yonkId, claimedValue: yonkAmount, returnedValue: returnAmount});
     }
 }
