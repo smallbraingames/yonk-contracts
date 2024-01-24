@@ -2,7 +2,7 @@
 pragma solidity >=0.8.21;
 
 import { System } from "@latticexyz/world/src/System.sol";
-import { RegisteredAddress, Registration, RegistrationData, Yonk, YonkData } from "codegen/index.sol";
+import { ClaimEvent, RegisteredAddress, Registration, RegistrationData, Yonk, YonkData } from "codegen/index.sol";
 
 import { LibClaim } from "libraries/LibClaim.sol";
 import { LibRegister } from "libraries/LibRegister.sol";
@@ -69,5 +69,6 @@ contract ClaimSystem is System {
         if (returnAmount > 0) {
             payable(fromAddress).transfer(returnAmount);
         }
+        ClaimEvent.set({id: yonkId, valueClaimed: yonkAmount, valueReturned: returnAmount});
     }
 }

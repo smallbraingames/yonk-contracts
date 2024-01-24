@@ -52,6 +52,14 @@ export default mudConfig({
                 to: "uint64",
                 claimed: "bool"
             },
+        },
+        ClaimEvent: {
+            keySchema: {id : "uint64"},
+            valueSchema: {
+                valueClaimed: "uint256",
+                valueReturned: "uint256",
+            },
+            offchainOnly: true,
         }
     },
     modules: [
