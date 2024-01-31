@@ -58,6 +58,7 @@ export default mudConfig({
             valueSchema: {
                 claimedValue: "uint256",
                 returnedValue: "uint256",
+                timestamp: "uint256",
             },
             offchainOnly: true,
         }
