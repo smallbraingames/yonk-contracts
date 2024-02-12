@@ -24,7 +24,6 @@ contract YonkSystem is System {
         if (from == yonkInfo.to) {
             revert NoSelfYonk();
         }
-
         if (!LibRegister.hasId({ id: from }) || !LibRegister.hasId({ id: yonkInfo.to })) {
             revert NotRegistered();
         }
@@ -42,7 +41,50 @@ contract YonkSystem is System {
             startTimestamp: block.timestamp,
             from: from,
             to: yonkInfo.to,
-            claimed: false
+            claimed: false,
+            isToEphemeralOwner: false
+        });
+
+        return id;
+    }
+
+    function yonkEphemeralOwner(
+        bytes32 dataCommitment,
+        uint136 encodedYonkInfo,
+        address ephemeralOwner
+    )
+        public
+        payable
+        returns (uint64)
+    {
+        YonkInfo memory yonkInfo = LibYonk.decodeYonkInfo({ encodedYonkInfo: encodedYonkInfo });
+
+        uint64 from = LibRegister.getAddressId({ accountAddress: _msgSender() });
+        uint256 startValue = _msgValue();
+        uint64 to = LibYonk.setEphemeralOwnerAddress({ ephemeralOwner: ephemeralOwner });
+
+        if (from == to) {
+            revert NoSelfYonk();
+        }
+        if (!LibRegister.hasId({ id: from })) {
+            revert NotRegistered();
+        }
+        if (yonkInfo.endValue > startValue) {
+            revert EndValueGreaterThanStart();
+        }
+
+        uint64 id = LibId.getId();
+        Yonk.set({
+            id: id,
+            dataCommitment: dataCommitment,
+            startValue: startValue,
+            endValue: yonkInfo.endValue,
+            lifeSeconds: yonkInfo.lifeSeconds,
+            startTimestamp: block.timestamp,
+            from: from,
+            to: to,
+            claimed: false,
+            isToEphemeralOwner: true
         });
 
         return id;
