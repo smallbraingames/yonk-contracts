@@ -4,7 +4,7 @@ pragma solidity >=0.8.21;
 import { YonkSystem } from "../../src/systems/YonkSystem.sol";
 import { YonkTest } from "../YonkTest.t.sol";
 
-import { Yonk, YonkData } from "codegen/index.sol";
+import { EphemeralOwnerAddress, Yonk, YonkData } from "codegen/index.sol";
 import { YonkInfo } from "common/YonkInfo.sol";
 import { LibRegister } from "libraries/LibRegister.sol";
 
@@ -36,6 +36,7 @@ contract YonkSystemTest is YonkTest {
         assertEq(yonkData.to, LibRegister.getAddressId({ accountAddress: b }));
         assertEq(yonkData.claimed, false);
         assertEq(address(worldAddress).balance, 100);
+        assertEq(yonkData.isToEphemeralOwner, false);
     }
 
     function testFuzz_CorrectlySetsYonk(
@@ -45,7 +46,8 @@ contract YonkSystemTest is YonkTest {
         uint40 endValue,
         uint32 lifeSeconds,
         bytes32 dataCommitment,
-        uint160 startTimestamp
+        uint160 startTimestamp,
+        bool isToEphemeralOwner
     )
         public
     {
@@ -67,9 +69,18 @@ contract YonkSystemTest is YonkTest {
         uint136 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
         vm.deal(from, startValue);
         vm.warp(startTimestamp);
+        uint64 yonkId;
         vm.prank(from);
-        uint64 yonkId =
-            world.yonk{ value: startValue }({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo });
+        if (!isToEphemeralOwner) {
+            yonkId =
+                world.yonk{ value: startValue }({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo });
+        } else {
+            yonkId = world.yonkEphemeralOwner{ value: startValue }({
+                dataCommitment: dataCommitment,
+                encodedYonkInfo: encodedYonkInfo,
+                ephemeralOwner: to
+            });
+        }
 
         YonkData memory yonkData = Yonk.get({ id: yonkId });
         assertEq(yonkData.dataCommitment, dataCommitment);
@@ -78,9 +89,14 @@ contract YonkSystemTest is YonkTest {
         assertEq(yonkData.lifeSeconds, yonkInfo.lifeSeconds);
         assertEq(yonkData.startTimestamp, startTimestamp);
         assertEq(yonkData.from, LibRegister.getAddressId({ accountAddress: from }));
-        assertEq(yonkData.to, LibRegister.getAddressId({ accountAddress: to }));
         assertEq(yonkData.claimed, false);
         assertEq(address(worldAddress).balance, startValue);
+        assertEq(yonkData.isToEphemeralOwner, isToEphemeralOwner);
+        if (!isToEphemeralOwner) {
+            assertEq(yonkData.to, LibRegister.getAddressId({ accountAddress: to }));
+        } else {
+            assertEq(EphemeralOwnerAddress.get({ id: yonkData.to }), to);
+        }
     }
 
     function test_RevertsWhen_FromNotRegistered() public {
@@ -229,6 +245,13 @@ contract YonkSystemTest is YonkTest {
         uint136 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
         vm.deal(from, startValue);
         vm.warp(startTimestamp);
+        vm.prank(from);
+        vm.expectRevert(YonkSystem.EndValueGreaterThanStart.selector);
+        world.yonkEphemeralOwner{ value: startValue }({
+            dataCommitment: dataCommitment,
+            encodedYonkInfo: encodedYonkInfo,
+            ephemeralOwner: to
+        });
         vm.prank(from);
         vm.expectRevert(YonkSystem.EndValueGreaterThanStart.selector);
         world.yonk{ value: startValue }({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo });
