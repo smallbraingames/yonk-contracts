@@ -28,7 +28,7 @@ contract ClaimSystem is System {
     error NotYourYonk();
     error YonkExpired();
 
-    function claimEphemeral(
+    function claimEphemeralOwner(
         bytes32 dataCommitmentPreimage,
         uint256 signatureR,
         uint256 signatureS,
@@ -56,6 +56,7 @@ contract ClaimSystem is System {
 
         uint64 toId = LibRegister.getAddressId({ accountAddress: to });
         Yonk.setTo({ id: yonkId, to: toId });
+        Yonk.setIsToEphemeralOwner({ id: yonkId, isToEphemeralOwner: false });
 
         claim(dataCommitmentPreimage, signatureR, signatureS, yonkId);
     }

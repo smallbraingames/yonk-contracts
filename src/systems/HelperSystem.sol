@@ -46,7 +46,7 @@ contract HelperSystem is System {
         );
         SystemSwitch.call(
             abi.encodeCall(
-                ClaimSystem.claimEphemeral,
+                ClaimSystem.claimEphemeralOwner,
                 (dataCommitmentPreimage, signatureR, signatureS, to, yonkId, ephemeralOwnerSignature)
             )
         );
