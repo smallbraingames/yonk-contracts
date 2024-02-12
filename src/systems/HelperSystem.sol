@@ -28,7 +28,31 @@ contract HelperSystem is System {
         return (registeredId, yonkId);
     }
 
-    function registerAndClaimEphemeral(
+    function registerAndYonkEphemeralOwner(
+        uint256 devicePublicKeyX,
+        uint256 devicePublicKeyY,
+        bytes32 dataCommitment,
+        uint136 encodedYonkInfo,
+        address ephemeralOwner
+    )
+        public
+        payable
+        returns (uint64, uint64)
+    {
+        uint64 registeredId = abi.decode(
+            SystemSwitch.call(abi.encodeCall(RegisterSystem.registerPayable, (devicePublicKeyX, devicePublicKeyY))),
+            (uint64)
+        );
+        uint64 yonkId = abi.decode(
+            SystemSwitch.call(
+                abi.encodeCall(YonkSystem.yonkEphemeralOwner, (dataCommitment, encodedYonkInfo, ephemeralOwner))
+            ),
+            (uint64)
+        );
+        return (registeredId, yonkId);
+    }
+
+    function registerAndClaimEphemeralOwner(
         uint256 devicePublicKeyX,
         uint256 devicePublicKeyY,
         bytes32 dataCommitmentPreimage,
@@ -41,8 +65,7 @@ contract HelperSystem is System {
     {
         address to = _msgSender();
         abi.decode(
-            SystemSwitch.call(abi.encodeCall(RegisterSystem.registerPayable, (devicePublicKeyX, devicePublicKeyY))),
-            (uint64)
+            SystemSwitch.call(abi.encodeCall(RegisterSystem.register, (devicePublicKeyX, devicePublicKeyY))), (uint64)
         );
         SystemSwitch.call(
             abi.encodeCall(

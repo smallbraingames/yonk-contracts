@@ -8,7 +8,6 @@ import { Yonk } from "codegen/index.sol";
 import { YonkInfo } from "common/YonkInfo.sol";
 
 import { ECDSA } from "@openzeppelin/utils/cryptography/ECDSA.sol";
-import { MessageHashUtils } from "@openzeppelin/utils/cryptography/MessageHashUtils.sol";
 
 import { VmSafe } from "forge-std/Vm.sol";
 
@@ -264,19 +263,5 @@ contract ClaimSystemTest is YonkTest {
         assertEq(address(sender).balance, 100);
         assertTrue(Yonk.getClaimed({ id: yonkId }));
         assertEq(Yonk.getTo({ id: yonkId }), receiverId);
-    }
-
-    function createEphemeralOwnerSignature(
-        uint256 ephemeralPrivateKey,
-        address to
-    )
-        internal
-        pure
-        returns (bytes memory)
-    {
-        bytes32 messageHash = MessageHashUtils.toEthSignedMessageHash(keccak256(abi.encodePacked(to)));
-        (uint8 v, bytes32 r, bytes32 s) = vm.sign(ephemeralPrivateKey, messageHash);
-        bytes memory signature = abi.encodePacked(r, s, v);
-        return signature;
     }
 }

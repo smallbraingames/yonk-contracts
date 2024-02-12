@@ -2,6 +2,8 @@
 pragma solidity >=0.8.21;
 
 import { MudTest } from "@latticexyz/world/test/MudTest.t.sol";
+
+import { MessageHashUtils } from "@openzeppelin/utils/cryptography/MessageHashUtils.sol";
 import { IWorld } from "codegen/world/IWorld.sol";
 import "forge-std/Test.sol";
 import { P256 } from "p256-verifier/P256.sol";
@@ -26,5 +28,19 @@ contract YonkTest is MudTest {
                 && addr > address(0x9)
         );
         assumePayable(addr);
+    }
+
+    function createEphemeralOwnerSignature(
+        uint256 ephemeralPrivateKey,
+        address to
+    )
+        internal
+        pure
+        returns (bytes memory)
+    {
+        bytes32 messageHash = MessageHashUtils.toEthSignedMessageHash(keccak256(abi.encodePacked(to)));
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(ephemeralPrivateKey, messageHash);
+        bytes memory signature = abi.encodePacked(r, s, v);
+        return signature;
     }
 }
