@@ -21,7 +21,7 @@ contract RegisterSystem is System {
         return id;
     }
 
-    ///@dev Payable version of register, for helper systems to register and yonk
+    /// @dev Payable version of register, for helper systems to register and yonk
     function registerPayable(uint256 devicePublicKeyX, uint256 devicePublicKeyY) public payable returns (uint64) {
         return register(devicePublicKeyX, devicePublicKeyY);
     }

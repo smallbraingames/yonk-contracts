@@ -2,21 +2,70 @@
 pragma solidity >=0.8.21;
 
 import { System } from "@latticexyz/world/src/System.sol";
-import { ClaimEvent, RegisteredAddress, Registration, RegistrationData, Yonk, YonkData } from "codegen/index.sol";
+import { ECDSA } from "@openzeppelin/utils/cryptography/ECDSA.sol";
+import { MessageHashUtils } from "@openzeppelin/utils/cryptography/MessageHashUtils.sol";
+import {
+    ClaimEvent,
+    EphemeralOwnerAddress,
+    RegisteredAddress,
+    Registration,
+    RegistrationData,
+    Yonk,
+    YonkData
+} from "codegen/index.sol";
 
 import { LibClaim } from "libraries/LibClaim.sol";
 import { LibRegister } from "libraries/LibRegister.sol";
 
 contract ClaimSystem is System {
     error AlreadyClaimed();
+    error Ephemeral();
     error ClaimerNotRegistered();
     error IncorrectData();
     error InvalidSignature();
+    error InvalidEphemeralSignature();
+    error NotEphemeral();
     error NotYourYonk();
     error YonkExpired();
 
+    function claimEphemeral(
+        bytes32 dataCommitmentPreimage,
+        uint256 signatureR,
+        uint256 signatureS,
+        address to,
+        uint64 yonkId,
+        bytes memory ephemeralOwnerSignature
+    )
+        public
+    {
+        bool isToEphemeralOwner = Yonk.getIsToEphemeralOwner({ id: yonkId });
+        uint64 ephemeralOwnerId = Yonk.getTo({ id: yonkId });
+
+        if (!isToEphemeralOwner) {
+            revert NotEphemeral();
+        }
+
+        bytes32 message = MessageHashUtils.toEthSignedMessageHash(keccak256(abi.encodePacked(to)));
+
+        address signer = ECDSA.recover(message, ephemeralOwnerSignature);
+        address ephemeralOwner = EphemeralOwnerAddress.get({ id: ephemeralOwnerId });
+
+        if (signer != ephemeralOwner) {
+            revert InvalidEphemeralSignature();
+        }
+
+        uint64 toId = LibRegister.getAddressId({ accountAddress: to });
+        Yonk.setTo({ id: yonkId, to: toId });
+
+        claim(dataCommitmentPreimage, signatureR, signatureS, yonkId);
+    }
+
     function claim(bytes32 dataCommitmentPreimage, uint256 signatureR, uint256 signatureS, uint64 yonkId) public {
         YonkData memory yonkData = Yonk.get({ id: yonkId });
+
+        if (yonkData.isToEphemeralOwner) {
+            revert Ephemeral();
+        }
 
         if (yonkData.claimed) {
             revert AlreadyClaimed();
@@ -69,6 +118,6 @@ contract ClaimSystem is System {
         if (returnAmount > 0) {
             payable(fromAddress).transfer(returnAmount);
         }
-        ClaimEvent.set({id: yonkId, claimedValue: yonkAmount, returnedValue: returnAmount, timestamp: block.timestamp});
+        ClaimEvent.set({ id: yonkId, claimedValue: yonkAmount, returnedValue: returnAmount, timestamp: block.timestamp });
     }
 }

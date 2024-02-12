@@ -21,6 +21,12 @@ export default mudConfig({
         },
     },
     tables: {
+        EphemeralOwnerAddress: {
+            keySchema: {id: "uint64"},
+            valueSchema: {
+                value: "address",
+            },
+        },
         Id: {
             keySchema: {},
             valueSchema: {
@@ -50,7 +56,8 @@ export default mudConfig({
                 startTimestamp: "uint256",
                 from: "uint64",
                 to: "uint64",
-                claimed: "bool"
+                claimed: "bool",
+                isToEphemeralOwner: "bool",
             },
         },
         ClaimEvent: {
