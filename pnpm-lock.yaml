@@ -41,8 +41,8 @@ devDependencies:
     specifier: https://github.com/dapphub/ds-test.git#e282159d5170298eb2455a6c05280ab5a73a4ef0
     version: github.com/dapphub/ds-test/e282159d5170298eb2455a6c05280ab5a73a4ef0
   forge-std:
-    specifier: https://github.com/foundry-rs/forge-std.git#74cfb77e308dd188d2f58864aaf44963ae6b88b1
-    version: github.com/foundry-rs/forge-std/74cfb77e308dd188d2f58864aaf44963ae6b88b1
+    specifier: https://github.com/foundry-rs/forge-std.git#77876f8a5b44b770a935621bb331660c90ac928e
+    version: github.com/foundry-rs/forge-std/77876f8a5b44b770a935621bb331660c90ac928e
   p256-verifier:
     specifier: https://github.com/daimo-eth/p256-verifier.git#29475ae300ec95d98d5c7cc34c094846f0aa2dcd
     version: github.com/daimo-eth/p256-verifier/29475ae300ec95d98d5c7cc34c094846f0aa2dcd
@@ -2848,8 +2848,8 @@ packages:
     version: 1.0.0
     dev: true
 
-  github.com/foundry-rs/forge-std/74cfb77e308dd188d2f58864aaf44963ae6b88b1:
-    resolution: {tarball: https://codeload.github.com/foundry-rs/forge-std/tar.gz/74cfb77e308dd188d2f58864aaf44963ae6b88b1}
+  github.com/foundry-rs/forge-std/77876f8a5b44b770a935621bb331660c90ac928e:
+    resolution: {tarball: https://codeload.github.com/foundry-rs/forge-std/tar.gz/77876f8a5b44b770a935621bb331660c90ac928e}
     name: forge-std
-    version: 1.6.0
+    version: 1.7.6
     dev: true
