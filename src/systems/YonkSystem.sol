@@ -14,6 +14,7 @@ contract YonkSystem is System {
     error NotRegistered();
     error UnsafeCast();
     error NoSelfYonk();
+    error ZeroValue();
 
     function yonk(bytes32 dataCommitment, uint136 encodedYonkInfo) public payable returns (uint64) {
         YonkInfo memory yonkInfo = LibYonk.decodeYonkInfo({ encodedYonkInfo: encodedYonkInfo });
@@ -29,6 +30,9 @@ contract YonkSystem is System {
         }
         if (yonkInfo.endValue > startValue) {
             revert EndValueGreaterThanStart();
+        }
+        if (startValue == 0) {
+            revert ZeroValue();
         }
 
         uint64 id = LibId.getId();
@@ -71,6 +75,9 @@ contract YonkSystem is System {
         }
         if (yonkInfo.endValue > startValue) {
             revert EndValueGreaterThanStart();
+        }
+        if (startValue == 0) {
+            revert ZeroValue();
         }
 
         uint64 id = LibId.getId();
