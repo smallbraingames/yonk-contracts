@@ -11,7 +11,7 @@ import { ECDSA } from "@openzeppelin/utils/cryptography/ECDSA.sol";
 
 import { VmSafe } from "forge-std/Vm.sol";
 
-import {console} from "forge-std/console.sol";
+import { console } from "forge-std/console.sol";
 
 contract ClaimSystemTest is YonkTest {
     function test_Claim() public {
@@ -275,7 +275,13 @@ contract ClaimSystemTest is YonkTest {
         vm.deal(sender, 1 ether);
 
         vm.prank(sender);
-        (, uint64 yonkId) = world.registerAndYonkEphemeralOwner{value: 7185456635769203}({ devicePublicKeyX: senderDevicePublicKeyX, devicePublicKeyY: senderDevicePublicKeyY, dataCommitment: 0x09a8ddd7b98ebd3780b538cd546b8376a886eea80807eba7a1c1ff8c899cf632, encodedYonkInfo: 4722366482869645236616, ephemeralOwner: 0x21Dd4e148515a9E844b9AdA947c9d725dE6C5C6D});
+        (, uint64 yonkId) = world.registerAndYonkEphemeralOwner{ value: 7_185_456_635_769_203 }({
+            devicePublicKeyX: senderDevicePublicKeyX,
+            devicePublicKeyY: senderDevicePublicKeyY,
+            dataCommitment: 0x09a8ddd7b98ebd3780b538cd546b8376a886eea80807eba7a1c1ff8c899cf632,
+            encodedYonkInfo: 4_722_366_482_869_645_236_616,
+            ephemeralOwner: 0x21Dd4e148515a9E844b9AdA947c9d725dE6C5C6D
+        });
 
         address receiver = address(0xAE59e2E7aF4e52b854fF5A1cE216d159079D14EA);
 

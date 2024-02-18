@@ -55,7 +55,7 @@ contract YonkSystemTest is YonkTest {
         assumeValidPayableAddress(to);
         vm.assume(from != to);
         vm.assume(uint256(endValue) <= startValue);
-
+        vm.assume(startValue > 0);
         vm.prank(from);
         world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
         vm.prank(to);
@@ -261,5 +261,23 @@ contract YonkSystemTest is YonkTest {
         YonkInfo memory yonkInfo = YonkInfo({ endValue: 2 ** 253, lifeSeconds: 0, to: 0 });
         vm.expectRevert(YonkSystem.UnsafeCast.selector);
         world.encodeYonkInfo({ yonkInfo: yonkInfo });
+    }
+
+    function test_RevertsWhen_ZeroValue() public {
+        address a = address(0xface);
+        address b = address(0xdead);
+
+        vm.prank(a);
+        world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
+        vm.prank(b);
+        world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
+
+        bytes32 dataCommitment = bytes32(uint256(123));
+        YonkInfo memory yonkInfo =
+            YonkInfo({ endValue: 0, lifeSeconds: 100, to: LibRegister.getAddressId({ accountAddress: b }) });
+        uint136 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
+        vm.prank(a);
+        vm.expectRevert(YonkSystem.ZeroValue.selector);
+        world.yonk{ value: 0 }({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo });
     }
 }
