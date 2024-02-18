@@ -11,6 +11,8 @@ import { ECDSA } from "@openzeppelin/utils/cryptography/ECDSA.sol";
 
 import { VmSafe } from "forge-std/Vm.sol";
 
+import {console} from "forge-std/console.sol";
+
 contract ClaimSystemTest is YonkTest {
     function test_Claim() public {
         address sender = address(0xface);
@@ -263,5 +265,33 @@ contract ClaimSystemTest is YonkTest {
         assertEq(address(sender).balance, 100);
         assertTrue(Yonk.getClaimed({ id: yonkId }));
         assertEq(Yonk.getTo({ id: yonkId }), receiverId);
+    }
+
+    function test_ClaimRegisterAndEphemeralOwner() public {
+        address sender = address(0x8DC5b6593e6B081839403f3648260efC62Ae17Bf);
+        uint256 senderDevicePublicKeyX = 12;
+        uint256 senderDevicePublicKeyY = 321;
+
+        vm.deal(sender, 1 ether);
+
+        vm.prank(sender);
+        (, uint64 yonkId) = world.registerAndYonkEphemeralOwner{value: 7185456635769203}({ devicePublicKeyX: senderDevicePublicKeyX, devicePublicKeyY: senderDevicePublicKeyY, dataCommitment: 0x09a8ddd7b98ebd3780b538cd546b8376a886eea80807eba7a1c1ff8c899cf632, encodedYonkInfo: 4722366482869645236616, ephemeralOwner: 0x21Dd4e148515a9E844b9AdA947c9d725dE6C5C6D});
+
+        address receiver = address(0xAE59e2E7aF4e52b854fF5A1cE216d159079D14EA);
+
+        vm.warp(block.timestamp + 100);
+        vm.prank(receiver);
+
+        world.registerAndClaimEphemeralOwner({
+            devicePublicKeyX: 0x4b9094408f9109a9b4213646bb957f278893047a79aa7b4513104f6fb765da63,
+            devicePublicKeyY: 0x7b9977c8af4a650563d04c0c8b15abe93ece5b27062a9d2123fc1b5e108f260e,
+            dataCommitmentPreimage: 0x1330778bd706c7da94b124aeb5cba6944814ac455b1cd428c83e10628e48b2f7,
+            signatureR: 0x26728d02613b21bd55a84c657b81d629047f1f7732fc8dcc23157eda33081296,
+            signatureS: 0x4af8a9d5d6f392b4daa4f03db7fcf714c02f07a89bb1a51f4362d01ad6127c83,
+            yonkId: yonkId,
+            ephemeralOwnerSignature: hex"127bbc0ba1e78e21f32d5f0e7b67ae38868eb731f792674095c8ba0d423e3809612aaa2463b3c918bf40a7753e432a55164af2bb11682a34ac686265580bbc2e1c"
+        });
+
+        assertTrue(Yonk.getClaimed({ id: yonkId }));
     }
 }
