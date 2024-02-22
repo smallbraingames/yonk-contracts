@@ -10,7 +10,7 @@
   wrap_comments = true
 
 [profile.default]
-  solc = "0.8.21"
+  solc = "0.8.24"
   ffi = false
   fuzz_runs = 512
   optimizer = true
