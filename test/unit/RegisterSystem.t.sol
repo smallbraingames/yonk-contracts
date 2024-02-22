@@ -20,6 +20,7 @@ contract RegisterSystemTest is YonkTest {
 
     function testFuzz_RegistersCorrectly(uint256 devicePublicKeyX, uint256 devicePublicKeyY, address sender) public {
         vm.prank(sender);
+        vm.assume(sender != address(world));
         world.register({ devicePublicKeyX: devicePublicKeyX, devicePublicKeyY: devicePublicKeyY });
         RegistrationData memory registration = Registration.get(1);
         assertEq(registration.devicePublicKeyX, devicePublicKeyX);

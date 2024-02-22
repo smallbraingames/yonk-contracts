@@ -6,15 +6,11 @@ export default mudConfig({
         ClaimSystem: {
             openAccess: true
         },
-        GetIdSystem: {
-            openAccess: false,
-            accessList: ["RegisterSystem", "YonkSystem"]
-        },
         HelperSystem: {
             openAccess: true,
         },
         RegisterSystem: {
-        openAccess: true,
+            openAccess: true,
         },
         YonkSystem: {
             openAccess: true,
