@@ -4,10 +4,14 @@
     "blockNumber": 13468242
   },
   "17001": {
-    "address": "0x004bfd5e619afe26abd52dfa50f1c047cf7d6151",
-    "blockNumber": 4467588
+    "address": "0xfda8bd4158a25fda8744751e729e70f098e7d9b0",
+    "blockNumber": 4645866
   },
   "31337": {
     "address": "0xf599e8f01a5ca469cda10711c3f2ffa4eeed755e"
+  },
+  "84532": {
+    "address": "0x9c869ee89f4acbb19339b08df63ad2ea25b571d5",
+    "blockNumber": 6443733
   }
 }
