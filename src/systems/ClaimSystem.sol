@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.21;
+pragma solidity >=0.8.24;
 
 import { System } from "@latticexyz/world/src/System.sol";
 import { ECDSA } from "@openzeppelin/utils/cryptography/ECDSA.sol";
@@ -15,6 +15,8 @@ import {
 } from "codegen/index.sol";
 
 import { LibClaim } from "libraries/LibClaim.sol";
+
+import { LibERC20 } from "libraries/LibERC20.sol";
 import { LibRegister } from "libraries/LibRegister.sol";
 
 contract ClaimSystem is System {
@@ -115,10 +117,12 @@ contract ClaimSystem is System {
 
         uint256 returnAmount = yonkData.startValue - yonkAmount;
         address fromAddress = RegisteredAddress.get({ id: yonkData.from });
-        payable(toAddress).transfer(yonkAmount);
+
+        LibERC20.transferTo({ to: toAddress, value: yonkAmount });
         if (returnAmount > 0) {
-            payable(fromAddress).transfer(returnAmount);
+            LibERC20.transferTo({ to: fromAddress, value: returnAmount });
         }
+
         ClaimEvent.set({ id: yonkId, claimedValue: yonkAmount, returnedValue: returnAmount, timestamp: block.timestamp });
     }
 }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.21;
+pragma solidity >=0.8.24;
 
 import { YonkSystem } from "../../src/systems/YonkSystem.sol";
 import { YonkTest } from "../YonkTest.t.sol";
@@ -18,17 +18,21 @@ contract HelperSystemTest is YonkTest {
         world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
 
         bytes32 dataCommitment = bytes32(uint256(123));
-        YonkInfo memory yonkInfo =
-            YonkInfo({ endValue: 0, lifeSeconds: 100, to: LibRegister.getAddressId({ accountAddress: b }) });
-        uint136 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
+        YonkInfo memory yonkInfo = YonkInfo({
+            startValue: 100,
+            endValue: 0,
+            lifeSeconds: 100,
+            to: LibRegister.getAddressId({ accountAddress: b })
+        });
+        uint176 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
 
-        vm.deal(a, 200);
+        mintAndApproveToken(a, 200);
         vm.expectRevert(YonkSystem.NotRegistered.selector);
         vm.prank(a);
-        world.yonk{ value: 100 }({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo });
+        world.yonk({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo });
 
         vm.prank(a);
-        (, uint64 yonkId) = world.registerAndYonk{ value: 100 }({
+        (, uint64 yonkId) = world.registerAndYonk({
             devicePublicKeyX: 234,
             devicePublicKeyY: 345,
             dataCommitment: dataCommitment,
@@ -44,7 +48,7 @@ contract HelperSystemTest is YonkTest {
         assertEq(yonkData.from, LibRegister.getAddressId({ accountAddress: a }));
         assertEq(yonkData.to, LibRegister.getAddressId({ accountAddress: b }));
         assertEq(yonkData.claimed, false);
-        assertEq(address(worldAddress).balance, 100);
+        assertEq(token.balanceOf(worldAddress), 100);
     }
 
     function test_CorrectlyRegistersAndClaimsEphemeralOwner() public {
@@ -54,14 +58,14 @@ contract HelperSystemTest is YonkTest {
         bytes32 dataCommitmentPreimage = keccak256(abi.encodePacked(data));
         bytes32 dataCommitment = keccak256(abi.encodePacked(dataCommitmentPreimage));
 
-        YonkInfo memory yonkInfo = YonkInfo({ endValue: 0, lifeSeconds: 100, to: 0 });
-        uint136 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
+        YonkInfo memory yonkInfo = YonkInfo({ startValue: 100, endValue: 0, lifeSeconds: 100, to: 0 });
+        uint176 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
 
         VmSafe.Wallet memory ephemeralWallet = vm.createWallet(uint256(keccak256(bytes("1"))));
 
-        vm.deal(a, 200);
+        mintAndApproveToken(a, 200);
         vm.prank(a);
-        (, uint64 yonkId) = world.registerAndYonkEphemeralOwner{ value: 100 }({
+        (, uint64 yonkId) = world.registerAndYonkEphemeralOwner({
             devicePublicKeyX: 234,
             devicePublicKeyY: 345,
             dataCommitment: dataCommitment,
@@ -102,7 +106,7 @@ contract HelperSystemTest is YonkTest {
         assertEq(yonkData.isToEphemeralOwner, false);
         assertEq(yonkData.claimed, true);
 
-        assertEq(address(a).balance, 100);
-        assertEq(address(b).balance, 100);
+        assertEq(token.balanceOf(address(a)), 100);
+        assertEq(token.balanceOf(address(b)), 100);
     }
 }

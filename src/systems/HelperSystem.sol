@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.21;
+pragma solidity >=0.8.24;
 
 import { System } from "@latticexyz/world/src/System.sol";
 import { LibSystemSwitch } from "libraries/LibSystemSwitch.sol";
@@ -12,14 +12,13 @@ contract HelperSystem is System {
         uint256 devicePublicKeyX,
         uint256 devicePublicKeyY,
         bytes32 dataCommitment,
-        uint136 encodedYonkInfo
+        uint176 encodedYonkInfo
     )
         public
-        payable
         returns (uint64, uint64)
     {
         uint64 registeredId = abi.decode(
-            LibSystemSwitch.call(abi.encodeCall(RegisterSystem.registerPayable, (devicePublicKeyX, devicePublicKeyY))),
+            LibSystemSwitch.call(abi.encodeCall(RegisterSystem.register, (devicePublicKeyX, devicePublicKeyY))),
             (uint64)
         );
         uint64 yonkId = abi.decode(
@@ -32,15 +31,14 @@ contract HelperSystem is System {
         uint256 devicePublicKeyX,
         uint256 devicePublicKeyY,
         bytes32 dataCommitment,
-        uint136 encodedYonkInfo,
+        uint176 encodedYonkInfo,
         address ephemeralOwner
     )
         public
-        payable
         returns (uint64, uint64)
     {
         uint64 registeredId = abi.decode(
-            LibSystemSwitch.call(abi.encodeCall(RegisterSystem.registerPayable, (devicePublicKeyX, devicePublicKeyY))),
+            LibSystemSwitch.call(abi.encodeCall(RegisterSystem.register, (devicePublicKeyX, devicePublicKeyY))),
             (uint64)
         );
         uint64 yonkId = abi.decode(
