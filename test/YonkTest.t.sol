@@ -1,21 +1,36 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.21;
+pragma solidity >=0.8.24;
 
 import { MudTest } from "@latticexyz/world/test/MudTest.t.sol";
 
+import { ERC20 } from "@openzeppelin/token/ERC20/ERC20.sol";
 import { MessageHashUtils } from "@openzeppelin/utils/cryptography/MessageHashUtils.sol";
 import { IWorld } from "codegen/world/IWorld.sol";
 import "forge-std/Test.sol";
 import { P256 } from "p256-verifier/P256.sol";
 import { P256Verifier } from "p256-verifier/P256Verifier.sol";
 
+contract TestERC20 is ERC20 {
+    constructor(string memory name, string memory symbol) ERC20(name, symbol) { }
+
+    function mint(address to, uint256 amount) public {
+        _mint(to, amount);
+    }
+
+    // Exclude from forge coverage
+    function test() public { }
+}
+
 contract YonkTest is MudTest {
+    TestERC20 public token;
     IWorld public world;
 
     function setUp() public override {
         super.setUp();
         vm.etch(P256.VERIFIER, type(P256Verifier).runtimeCode);
+        token = new TestERC20("Test", "TST");
         world = IWorld(worldAddress);
+        world.setERC20Address(address(token));
     }
 
     function assumeValidPayableAddress(address addr) internal {
@@ -28,6 +43,12 @@ contract YonkTest is MudTest {
                 && addr > address(0x9)
         );
         assumePayable(addr);
+    }
+
+    function mintAndApproveToken(address from, uint256 amount) internal {
+        token.mint(from, amount);
+        vm.prank(from);
+        token.approve(worldAddress, amount);
     }
 
     function createEphemeralOwnerSignature(

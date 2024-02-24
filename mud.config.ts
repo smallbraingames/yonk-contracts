@@ -17,6 +17,12 @@ export default mudConfig({
         },
     },
     tables: {
+        ERC20Address: {
+            keySchema: {},
+            valueSchema: {
+                value: "address",
+            },
+        },
         EphemeralOwnerAddress: {
             keySchema: {id: "uint64"},
             valueSchema: {
