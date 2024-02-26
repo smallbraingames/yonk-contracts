@@ -7,6 +7,7 @@ import { MessageHashUtils } from "@openzeppelin/utils/cryptography/MessageHashUt
 import {
     ClaimEvent,
     EphemeralOwnerAddress,
+    ReclaimEvent,
     RegisteredAddress,
     Registration,
     RegistrationData,
@@ -56,6 +57,7 @@ contract ClaimSystem is System {
 
         Yonk.setReclaimed({ id: yonkId, reclaimed: true });
         LibERC20.transferTo({ to: senderAddress, value: yonkData.startValue });
+        ReclaimEvent.set({ id: yonkId, returnedValue: yonkData.startValue, timestamp: block.timestamp });
     }
 
     function claimEphemeralOwner(
