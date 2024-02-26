@@ -24,13 +24,13 @@ contract YonkSystem is System {
     error ZeroValue();
 
     function checkYonkInfo(YonkInfo memory yonkInfo) internal pure {
+        if (yonkInfo.startValue <= 0) {
+            revert ZeroValue();
+        }
         if (yonkInfo.endValue > yonkInfo.startValue) {
             revert EndValueGreaterThanStart();
         }
-        if (yonkInfo.startValue == 0) {
-            revert ZeroValue();
-        }
-        if (yonkInfo.lifeSeconds == 0) {
+        if (yonkInfo.lifeSeconds <= 0) {
             revert ZeroLifeSeconds();
         }
     }
@@ -51,6 +51,9 @@ contract YonkSystem is System {
         }
 
         uint64 id = LibId.getId();
+
+        LibERC20.collect({ from: fromAddress, value: yonkInfo.startValue });
+
         Yonk.set({
             id: id,
             dataCommitment: dataCommitment,
@@ -64,9 +67,6 @@ contract YonkSystem is System {
             reclaimed: false,
             isToEphemeralOwner: false
         });
-
-        LibERC20.collect({ from: fromAddress, value: yonkInfo.startValue });
-
         return id;
     }
 
@@ -80,14 +80,6 @@ contract YonkSystem is System {
     {
         YonkInfo memory yonkInfo = LibYonk.decodeYonkInfo({ encodedYonkInfo: encodedYonkInfo });
         address fromAddress = _msgSender();
-        uint64 from = LibRegister.getAddressId({ accountAddress: fromAddress });
-
-        if (LibEphemeralOwner.isRegistered({ accountAddress: ephemeralOwner })) {
-            revert EphemeralOwnerAlreadyExists();
-        }
-        uint64 to = LibEphemeralOwner.setEphemeralOwnerAddress({ ephemeralOwner: ephemeralOwner });
-
-        checkYonkInfo(yonkInfo);
 
         if (fromAddress == ephemeralOwner) {
             revert NoSelfYonk();
@@ -95,12 +87,24 @@ contract YonkSystem is System {
         if (yonkInfo.to != 0) {
             revert EphemeralYonkNonzeroTo();
         }
+        if (LibEphemeralOwner.isRegistered({ accountAddress: ephemeralOwner })) {
+            revert EphemeralOwnerAlreadyExists();
+        }
+
+        checkYonkInfo(yonkInfo);
+
+        uint64 from = LibRegister.getAddressId({ accountAddress: fromAddress });
+
+        uint64 to = LibEphemeralOwner.setEphemeralOwnerAddress({ ephemeralOwner: ephemeralOwner });
 
         if (!LibRegister.hasId({ id: from })) {
             revert NotRegistered();
         }
 
         uint64 id = LibId.getId();
+
+        LibERC20.collect({ from: fromAddress, value: yonkInfo.startValue });
+
         Yonk.set({
             id: id,
             dataCommitment: dataCommitment,
@@ -114,8 +118,6 @@ contract YonkSystem is System {
             reclaimed: false,
             isToEphemeralOwner: true
         });
-
-        LibERC20.collect({ from: fromAddress, value: yonkInfo.startValue });
 
         return id;
     }
