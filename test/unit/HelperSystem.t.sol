@@ -109,4 +109,51 @@ contract HelperSystemTest is YonkTest {
         assertEq(token.balanceOf(address(a)), 100);
         assertEq(token.balanceOf(address(b)), 100);
     }
+
+    function test_CorrectlyReclaimsBatch() public {
+        address a = address(0xface);
+
+        string memory data = "deadbeef0000";
+        bytes32 dataCommitmentPreimage = keccak256(abi.encodePacked(data));
+        bytes32 dataCommitment = keccak256(abi.encodePacked(dataCommitmentPreimage));
+
+        YonkInfo memory yonkInfo = YonkInfo({ startValue: 100, endValue: 0, lifeSeconds: 100, to: 0 });
+        uint176 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
+
+        VmSafe.Wallet memory ephemeralWallet = vm.createWallet(uint256(keccak256(bytes("1"))));
+
+        mintAndApproveToken(a, 200);
+        vm.prank(a);
+        (, uint64 yonkIdOne) = world.registerAndYonkEphemeralOwner({
+            devicePublicKeyX: 234,
+            devicePublicKeyY: 345,
+            dataCommitment: dataCommitment,
+            encodedYonkInfo: encodedYonkInfo,
+            ephemeralOwner: ephemeralWallet.addr
+        });
+
+        VmSafe.Wallet memory ephemeralWalletTwo = vm.createWallet(uint256(keccak256(bytes("2"))));
+
+        vm.prank(a);
+        uint64 yonkIdTwo = world.yonkEphemeralOwner({
+            dataCommitment: dataCommitment,
+            encodedYonkInfo: encodedYonkInfo,
+            ephemeralOwner: ephemeralWalletTwo.addr
+        });
+
+        assertEq(token.balanceOf(worldAddress), 200);
+        assertEq(token.balanceOf(a), 0);
+
+        uint64[] memory yonkIds = new uint64[](2);
+        yonkIds[0] = yonkIdOne;
+        yonkIds[1] = yonkIdTwo;
+
+        vm.warp(block.timestamp + 101);
+
+        vm.prank(a);
+        world.reclaimBatch(yonkIds);
+
+        assertEq(token.balanceOf(worldAddress), 0);
+        assertEq(token.balanceOf(a), 200);
+    }
 }

@@ -5,7 +5,7 @@ import { P256 } from "p256-verifier/P256.sol";
 
 library LibClaim {
     function isAlive(uint256 startTimestamp, uint256 lifeSeconds) internal view returns (bool) {
-        return block.timestamp < startTimestamp + lifeSeconds;
+        return block.timestamp < (startTimestamp + lifeSeconds);
     }
 
     function isValidSignature(
