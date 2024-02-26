@@ -9,10 +9,12 @@
   tab_width = 4
   wrap_comments = true
 
+[fuzz]
+  runs = 512
+
 [profile.default]
   solc = "0.8.24"
   ffi = false
-  fuzz_runs = 512
   optimizer = true
   optimizer_runs = 3000
   verbosity = 2
