@@ -7,12 +7,15 @@ import { Yonk } from "codegen/index.sol";
 import { YonkInfo } from "common/YonkInfo.sol";
 
 import { LibERC20 } from "libraries/LibERC20.sol";
+
+import { LibEphemeralOwner } from "libraries/LibEphemeralOwner.sol";
 import { LibId } from "libraries/LibId.sol";
 import { LibRegister } from "libraries/LibRegister.sol";
 import { LibYonk } from "libraries/LibYonk.sol";
 
 contract YonkSystem is System {
     error EndValueGreaterThanStart();
+    error EphemeralOwnerAlreadyExists();
     error NotRegistered();
     error UnsafeCast();
     error NoSelfYonk();
@@ -68,7 +71,12 @@ contract YonkSystem is System {
         YonkInfo memory yonkInfo = LibYonk.decodeYonkInfo({ encodedYonkInfo: encodedYonkInfo });
         address fromAddress = _msgSender();
         uint64 from = LibRegister.getAddressId({ accountAddress: fromAddress });
-        uint64 to = LibYonk.setEphemeralOwnerAddress({ ephemeralOwner: ephemeralOwner });
+
+        if (LibEphemeralOwner.isRegistered({ accountAddress: ephemeralOwner })) {
+            revert EphemeralOwnerAlreadyExists();
+        }
+
+        uint64 to = LibEphemeralOwner.setEphemeralOwnerAddress({ ephemeralOwner: ephemeralOwner });
 
         if (from == to) {
             revert NoSelfYonk();

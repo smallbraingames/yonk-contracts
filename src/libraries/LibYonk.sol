@@ -1,18 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.24;
 
-import { EphemeralOwnerAddress } from "codegen/index.sol";
-
 import { YonkInfo } from "common/YonkInfo.sol";
-import { LibId } from "libraries/LibId.sol";
 
 library LibYonk {
-    function setEphemeralOwnerAddress(address ephemeralOwner) internal returns (uint64) {
-        uint64 id = LibId.getId();
-        EphemeralOwnerAddress.set({ id: id, value: ephemeralOwner });
-        return id;
-    }
-
     function encodeYonkInfo(YonkInfo memory yonkInfo) internal pure returns (uint176) {
         return uint176(
             bytes22(
