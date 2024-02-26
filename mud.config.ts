@@ -88,5 +88,10 @@ export default mudConfig({
             root: true,
             args: [resolveTableId("RegisteredAddress")],
         },
+        {
+            name: "KeysWithValueModule",
+            root: true,
+            args: [resolveTableId("EphemeralOwnerAddress")],
+        },
     ],
 });
