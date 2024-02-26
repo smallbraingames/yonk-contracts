@@ -71,11 +71,11 @@ contract ClaimSystem is System {
         public
     {
         bool isToEphemeralOwner = Yonk.getIsToEphemeralOwner({ id: yonkId });
-        uint64 ephemeralOwnerId = Yonk.getTo({ id: yonkId });
-
         if (!isToEphemeralOwner) {
             revert NotEphemeral();
         }
+
+        uint64 ephemeralOwnerId = Yonk.getTo({ id: yonkId });
 
         bytes32 message = MessageHashUtils.toEthSignedMessageHash(keccak256(abi.encodePacked(to)));
 
@@ -87,6 +87,10 @@ contract ClaimSystem is System {
         }
 
         uint64 toId = LibRegister.getAddressId({ accountAddress: to });
+        if (!LibRegister.hasId({ id: toId })) {
+            revert ClaimerNotRegistered();
+        }
+        
         Yonk.setTo({ id: yonkId, to: toId });
         Yonk.setIsToEphemeralOwner({ id: yonkId, isToEphemeralOwner: false });
 
