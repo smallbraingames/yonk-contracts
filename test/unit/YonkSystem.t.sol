@@ -194,6 +194,7 @@ contract YonkSystemTest is YonkTest {
         assumeValidPayableAddress(to);
         vm.assume(from != to);
         vm.assume(uint256(endValue) > startValue);
+        vm.assume(startValue > 0);
         vm.assume(lifeSeconds > 0);
 
         vm.prank(from);
@@ -207,12 +208,23 @@ contract YonkSystemTest is YonkTest {
             lifeSeconds: lifeSeconds,
             to: LibRegister.getAddressId({ accountAddress: to })
         });
+        YonkInfo memory ephemeralYonkInfo =
+            YonkInfo({ startValue: startValue, endValue: endValue, lifeSeconds: lifeSeconds, to: 0 });
         uint176 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
+        uint176 encodedEphemeralYonkInfo = world.encodeYonkInfo({ yonkInfo: ephemeralYonkInfo });
+
         mintAndApproveToken(from, startValue);
+
         vm.warp(startTimestamp);
+
         vm.prank(from);
         vm.expectRevert(YonkSystem.EndValueGreaterThanStart.selector);
-        world.yonkEphemeralOwner({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo, ephemeralOwner: to });
+        world.yonkEphemeralOwner({
+            dataCommitment: dataCommitment,
+            encodedYonkInfo: encodedEphemeralYonkInfo,
+            ephemeralOwner: to
+        });
+
         vm.prank(from);
         vm.expectRevert(YonkSystem.EndValueGreaterThanStart.selector);
         world.yonk({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo });

@@ -94,6 +94,11 @@ contract ClaimSystem is System {
     }
 
     function claim(bytes32 dataCommitmentPreimage, uint256 signatureR, uint256 signatureS, uint64 yonkId) public {
+        address toAddress = _msgSender();
+        if (!LibRegister.isRegistered({ accountAddress: toAddress })) {
+            revert ClaimerNotRegistered();
+        }
+
         YonkData memory yonkData = Yonk.get({ id: yonkId });
 
         if (yonkData.isToEphemeralOwner) {
@@ -104,23 +109,18 @@ contract ClaimSystem is System {
             revert AlreadyClaimed();
         }
 
-        address toAddress = _msgSender();
-        if (!LibRegister.isRegistered({ accountAddress: toAddress })) {
-            revert ClaimerNotRegistered();
-        }
-
         uint64 toId = LibRegister.getAddressId({ accountAddress: toAddress });
         if (yonkData.to != toId) {
             revert NotYourYonk();
         }
 
+        if (!LibClaim.isAlive({ startTimestamp: yonkData.startTimestamp, lifeSeconds: yonkData.lifeSeconds })) {
+            revert YonkExpired();
+        }
+
         bytes32 dataCommitment = keccak256(abi.encodePacked(dataCommitmentPreimage));
         if (yonkData.dataCommitment != dataCommitment) {
             revert IncorrectData();
-        }
-
-        if (!LibClaim.isAlive({ startTimestamp: yonkData.startTimestamp, lifeSeconds: yonkData.lifeSeconds })) {
-            revert YonkExpired();
         }
 
         RegistrationData memory registrationData = Registration.get({ id: toId });
