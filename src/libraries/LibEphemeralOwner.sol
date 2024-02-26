@@ -13,7 +13,7 @@ library LibEphemeralOwner {
         return id;
     }
 
-    function getAddressId(address accountAddress) internal view returns (uint64) {
+    function isRegistered(address accountAddress) internal view returns (bool) {
         (bytes memory staticData, PackedCounter encodedLengths, bytes memory dynamicData) =
             EphemeralOwnerAddress.encode({ value: accountAddress });
         bytes32[] memory ids = getKeysWithValue({
@@ -22,10 +22,6 @@ library LibEphemeralOwner {
             encodedLengths: encodedLengths,
             dynamicData: dynamicData
         });
-        return ids.length > 0 ? uint64(uint256(ids[0])) : 0;
-    }
-
-    function isRegistered(address accountAddress) internal view returns (bool) {
-        return getAddressId(accountAddress) != 0;
+        return ids.length > 0;
     }
 }
