@@ -11,6 +11,7 @@ contract SetERC20SystemTest is YonkTest {
     }
 
     function testFuzz_RevertsWhen_SetTwice(address setter, address token) public {
+        assumeValidPayableAddress(setter);
         vm.expectRevert(SetERC20System.AlreadySet.selector);
         vm.prank(setter);
         world.setERC20Address(token);

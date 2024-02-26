@@ -3,7 +3,7 @@ pragma solidity >=0.8.24;
 
 import { PackedCounter } from "@latticexyz/store/src/PackedCounter.sol";
 import { getKeysWithValue } from "@latticexyz/world-modules/src/modules/keyswithvalue/getKeysWithValue.sol";
-import { RegisteredAddress, RegisteredAddressTableId } from "codegen/index.sol";
+import { RegisteredAddress, RegisteredAddressTableId, Registration, RegistrationData } from "codegen/index.sol";
 
 library LibRegister {
     function getAddressId(address accountAddress) internal view returns (uint64) {
@@ -23,6 +23,8 @@ library LibRegister {
     }
 
     function hasId(uint64 id) internal view returns (bool) {
-        return RegisteredAddress.get({ id: id }) != address(0);
+        RegistrationData memory registration = Registration.get({ id: id });
+        return RegisteredAddress.get({ id: id }) != address(0) && registration.devicePublicKeyX != 0
+            && registration.devicePublicKeyY != 0;
     }
 }

@@ -16,10 +16,24 @@ import { LibYonk } from "libraries/LibYonk.sol";
 contract YonkSystem is System {
     error EndValueGreaterThanStart();
     error EphemeralOwnerAlreadyExists();
+    error EphemeralYonkNonzeroTo();
     error NotRegistered();
     error UnsafeCast();
     error NoSelfYonk();
+    error ZeroLifeSeconds();
     error ZeroValue();
+
+    function checkYonkInfo(YonkInfo memory yonkInfo) internal pure {
+        if (yonkInfo.endValue > yonkInfo.startValue) {
+            revert EndValueGreaterThanStart();
+        }
+        if (yonkInfo.startValue == 0) {
+            revert ZeroValue();
+        }
+        if (yonkInfo.lifeSeconds == 0) {
+            revert ZeroLifeSeconds();
+        }
+    }
 
     function yonk(bytes32 dataCommitment, uint176 encodedYonkInfo) public returns (uint64) {
         YonkInfo memory yonkInfo = LibYonk.decodeYonkInfo({ encodedYonkInfo: encodedYonkInfo });
@@ -27,17 +41,13 @@ contract YonkSystem is System {
         address fromAddress = _msgSender();
         uint64 from = LibRegister.getAddressId({ accountAddress: fromAddress });
 
-        if (from == yonkInfo.to) {
-            revert NoSelfYonk();
-        }
+        checkYonkInfo(yonkInfo);
+
         if (!LibRegister.hasId({ id: from }) || !LibRegister.hasId({ id: yonkInfo.to })) {
             revert NotRegistered();
         }
-        if (yonkInfo.endValue > yonkInfo.startValue) {
-            revert EndValueGreaterThanStart();
-        }
-        if (yonkInfo.startValue == 0) {
-            revert ZeroValue();
+        if (from == yonkInfo.to) {
+            revert NoSelfYonk();
         }
 
         uint64 id = LibId.getId();
@@ -75,20 +85,19 @@ contract YonkSystem is System {
         if (LibEphemeralOwner.isRegistered({ accountAddress: ephemeralOwner })) {
             revert EphemeralOwnerAlreadyExists();
         }
-
         uint64 to = LibEphemeralOwner.setEphemeralOwnerAddress({ ephemeralOwner: ephemeralOwner });
 
-        if (from == to) {
+        checkYonkInfo(yonkInfo);
+
+        if (fromAddress == ephemeralOwner) {
             revert NoSelfYonk();
         }
+        if (yonkInfo.to != 0) {
+            revert EphemeralYonkNonzeroTo();
+        }
+
         if (!LibRegister.hasId({ id: from })) {
             revert NotRegistered();
-        }
-        if (yonkInfo.endValue > yonkInfo.startValue) {
-            revert EndValueGreaterThanStart();
-        }
-        if (yonkInfo.startValue == 0) {
-            revert ZeroValue();
         }
 
         uint64 id = LibId.getId();
@@ -112,7 +121,12 @@ contract YonkSystem is System {
     }
 
     function encodeYonkInfo(YonkInfo memory yonkInfo) public pure returns (uint176) {
-        if (!(yonkInfo.to < 1 << 64 && yonkInfo.endValue < 1 << 40 && yonkInfo.lifeSeconds < 1 << 32)) {
+        if (
+            !(
+                (yonkInfo.to < (1 << 64)) && (yonkInfo.startValue < (1 << 40)) && (yonkInfo.endValue < (1 << 40))
+                    && (yonkInfo.lifeSeconds < (1 << 32))
+            )
+        ) {
             revert UnsafeCast();
         }
         return LibYonk.encodeYonkInfo({ yonkInfo: yonkInfo });

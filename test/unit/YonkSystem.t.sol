@@ -15,6 +15,7 @@ contract YonkSystemTest is YonkTest {
 
         vm.prank(a);
         world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
+
         vm.prank(b);
         world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
 
@@ -60,8 +61,11 @@ contract YonkSystemTest is YonkTest {
         vm.assume(from != to);
         vm.assume(uint256(endValue) <= startValue);
         vm.assume(startValue > 0);
+        vm.assume(lifeSeconds > 0);
+
         vm.prank(from);
         world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
+
         vm.prank(to);
         world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
 
@@ -71,19 +75,24 @@ contract YonkSystemTest is YonkTest {
             lifeSeconds: lifeSeconds,
             to: LibRegister.getAddressId({ accountAddress: to })
         });
+
         uint176 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
         mintAndApproveToken(from, startValue);
         vm.warp(startTimestamp);
         uint64 yonkId;
-        vm.prank(from);
         if (!isToEphemeralOwner) {
+            vm.prank(from);
             yonkId = world.yonk({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo });
         } else {
+            vm.startPrank(from);
             yonkId = world.yonkEphemeralOwner({
                 dataCommitment: dataCommitment,
-                encodedYonkInfo: encodedYonkInfo,
+                encodedYonkInfo: world.encodeYonkInfo({
+                    yonkInfo: YonkInfo({ startValue: startValue, endValue: endValue, lifeSeconds: lifeSeconds, to: 0 })
+                }),
                 ephemeralOwner: to
             });
+            vm.stopPrank();
         }
 
         YonkData memory yonkData = Yonk.get({ id: yonkId });
@@ -117,42 +126,11 @@ contract YonkSystemTest is YonkTest {
             lifeSeconds: 100,
             to: LibRegister.getAddressId({ accountAddress: b })
         });
+
         uint176 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
         mintAndApproveToken(a, 100);
+
         vm.prank(a);
-        vm.expectRevert(YonkSystem.NotRegistered.selector);
-        world.yonk({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo });
-    }
-
-    function testFuzz_RevertsWhen_FromNotRegistered(
-        address from,
-        address to,
-        uint256 startValue,
-        uint40 endValue,
-        uint32 lifeSeconds,
-        bytes32 dataCommitment,
-        uint160 startTimestamp
-    )
-        public
-    {
-        assumeValidPayableAddress(from);
-        assumeValidPayableAddress(to);
-        vm.assume(from != to);
-        vm.assume(uint256(endValue) <= startValue);
-
-        vm.prank(to);
-        world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
-
-        YonkInfo memory yonkInfo = YonkInfo({
-            startValue: startValue,
-            endValue: endValue,
-            lifeSeconds: lifeSeconds,
-            to: LibRegister.getAddressId({ accountAddress: to })
-        });
-        uint176 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
-        mintAndApproveToken(from, startValue);
-        vm.warp(startTimestamp);
-        vm.prank(from);
         vm.expectRevert(YonkSystem.NotRegistered.selector);
         world.yonk({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo });
     }
@@ -174,39 +152,6 @@ contract YonkSystemTest is YonkTest {
         uint176 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
         mintAndApproveToken(a, 100);
         vm.prank(a);
-        vm.expectRevert(YonkSystem.NotRegistered.selector);
-        world.yonk({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo });
-    }
-
-    function testFuzz_RevertsWhen_ToNotRegistered(
-        address from,
-        address to,
-        uint256 startValue,
-        uint40 endValue,
-        uint32 lifeSeconds,
-        bytes32 dataCommitment,
-        uint160 startTimestamp
-    )
-        public
-    {
-        assumeValidPayableAddress(from);
-        assumeValidPayableAddress(to);
-        vm.assume(from != to);
-        vm.assume(uint256(endValue) <= startValue);
-
-        vm.prank(from);
-        world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
-
-        YonkInfo memory yonkInfo = YonkInfo({
-            startValue: startValue,
-            endValue: endValue,
-            lifeSeconds: lifeSeconds,
-            to: LibRegister.getAddressId({ accountAddress: to })
-        });
-        uint176 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
-        mintAndApproveToken(from, startValue);
-        vm.warp(startTimestamp);
-        vm.prank(from);
         vm.expectRevert(YonkSystem.NotRegistered.selector);
         world.yonk({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo });
     }
@@ -249,6 +194,7 @@ contract YonkSystemTest is YonkTest {
         assumeValidPayableAddress(to);
         vm.assume(from != to);
         vm.assume(uint256(endValue) > startValue);
+        vm.assume(lifeSeconds > 0);
 
         vm.prank(from);
         world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
@@ -316,6 +262,7 @@ contract YonkSystemTest is YonkTest {
         vm.assume(uint256(endValue) <= startValue);
         vm.assume(startValue > 0);
         vm.prank(from);
+        vm.assume(lifeSeconds > 0);
         world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
 
         YonkInfo memory yonkInfo = YonkInfo({

@@ -4,6 +4,7 @@ pragma solidity >=0.8.24;
 import { RegisterSystem } from "../../src/systems/RegisterSystem.sol";
 import { YonkTest } from "../YonkTest.t.sol";
 import { RegisteredAddress, Registration, RegistrationData } from "codegen/index.sol";
+import { LibRegister } from "libraries/LibRegister.sol";
 
 contract RegisterSystemTest is YonkTest {
     function test_RegistersCorrectly() public {
@@ -26,6 +27,7 @@ contract RegisterSystemTest is YonkTest {
         assertEq(registration.devicePublicKeyX, devicePublicKeyX);
         assertEq(registration.devicePublicKeyY, devicePublicKeyY);
         assertEq(RegisteredAddress.get(1), sender);
+        assertEq(LibRegister.getAddressId(sender), 1);
     }
 
     function test_RevertsWhen_DuplicateRegister() public {
