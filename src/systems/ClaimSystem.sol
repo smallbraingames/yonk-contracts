@@ -21,6 +21,7 @@ import { LibRegister } from "libraries/LibRegister.sol";
 
 contract ClaimSystem is System {
     error AlreadyClaimed();
+    error AlreadyReclaimed();
     error Ephemeral();
     error ClaimerNotRegistered();
     error IncorrectData();
@@ -29,6 +30,33 @@ contract ClaimSystem is System {
     error NotEphemeral();
     error NotYourYonk();
     error YonkExpired();
+    error YonkNotExpired();
+
+    function reclaim(uint64 yonkId) public {
+        YonkData memory yonkData = Yonk.get({ id: yonkId });
+
+        address senderAddress = _msgSender();
+        uint64 fromId = LibRegister.getAddressId({ accountAddress: senderAddress });
+
+        if (yonkData.from != fromId) {
+            revert NotYourYonk();
+        }
+
+        if (yonkData.claimed) {
+            revert AlreadyClaimed();
+        }
+
+        if (LibClaim.isAlive({ startTimestamp: yonkData.startTimestamp, lifeSeconds: yonkData.lifeSeconds })) {
+            revert YonkNotExpired();
+        }
+
+        if (yonkData.reclaimed) {
+            revert AlreadyReclaimed();
+        }
+
+        Yonk.setReclaimed({ id: yonkId, reclaimed: true });
+        LibERC20.transferTo({ to: senderAddress, value: yonkData.startValue });
+    }
 
     function claimEphemeralOwner(
         bytes32 dataCommitmentPreimage,

@@ -59,6 +59,7 @@ export default mudConfig({
                 from: "uint64",
                 to: "uint64",
                 claimed: "bool",
+                reclaimed: "bool",
                 isToEphemeralOwner: "bool",
             },
         },
@@ -70,6 +71,15 @@ export default mudConfig({
                 timestamp: "uint256",
             },
             offchainOnly: true,
+        },
+        ReclaimEvent: {
+            keySchema: {id : "uint64"},
+            valueSchema: {
+                timestamp: "uint256",
+                returnedValue: "uint256",
+            },
+            offchainOnly: true,
+        
         }
     },
     modules: [
