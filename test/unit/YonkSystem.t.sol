@@ -299,4 +299,44 @@ contract YonkSystemTest is YonkTest {
         vm.expectRevert(YonkSystem.ZeroValue.selector);
         world.yonk({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo });
     }
+
+    function testFuzz_RevertsWhen_DuplicateEphemeralOwner(
+        address from,
+        address to,
+        uint40 startValue,
+        uint40 endValue,
+        uint32 lifeSeconds,
+        bytes32 dataCommitment,
+        uint160 startTimestamp
+    )
+        public
+    {
+        assumeValidPayableAddress(from);
+        vm.assume(from != to);
+        vm.assume(uint256(endValue) <= startValue);
+        vm.assume(startValue > 0);
+        vm.prank(from);
+        world.register({ devicePublicKeyX: 234, devicePublicKeyY: 345 });
+
+        YonkInfo memory yonkInfo = YonkInfo({
+            startValue: startValue,
+            endValue: endValue,
+            lifeSeconds: lifeSeconds,
+            to: LibRegister.getAddressId({ accountAddress: to })
+        });
+        uint176 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
+        mintAndApproveToken(from, startValue);
+        vm.warp(startTimestamp);
+        uint64 yonkId;
+        vm.prank(from);
+        yonkId = world.yonkEphemeralOwner({
+            dataCommitment: dataCommitment,
+            encodedYonkInfo: encodedYonkInfo,
+            ephemeralOwner: to
+        });
+
+        vm.expectRevert(YonkSystem.EphemeralOwnerAlreadyExists.selector);
+        vm.prank(from);
+        world.yonkEphemeralOwner({ dataCommitment: dataCommitment, encodedYonkInfo: encodedYonkInfo, ephemeralOwner: to });
+    }
 }
