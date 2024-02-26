@@ -9,6 +9,7 @@
     "deploy:local": "pnpm run build && mud deploy",
     "deploy:redstone-holesky": "pnpm run build && FOUNDRY_ETH_RPC_URL=$(grep REDSTONE_HOLESKY_RPC_URL .env | cut -d '=' -f2) mud deploy",
     "deploy:base-sepolia": "pnpm run build && FOUNDRY_ETH_RPC_URL=$(grep BASE_SEPOLIA_RPC_URL .env | cut -d '=' -f2) mud deploy",
+    "deploy:sepolia": "pnpm run build && FOUNDRY_ETH_RPC_URL=$(grep ETH_SEPOLIA_RPC_URL .env | cut -d '=' -f2) mud deploy",
     "dev": "pnpm mud dev-contracts",
     "faucet": "DEBUG=mud:faucet pnpm faucet-server",
     "lint": "forge fmt && pnpm run solhint",
@@ -36,6 +37,6 @@
     "typescript": "5.1.6"
   },
   "dependencies": {
-    "viem": "^1.20.3"
+    "viem": "2.7.12"
   }
 }

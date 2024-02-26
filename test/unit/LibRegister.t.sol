@@ -24,6 +24,8 @@ contract LibRegisterTest is YonkTest {
     {
         vm.assume(accountAddressOne != address(0) && accountAddressTwo != address(0));
         vm.assume(accountAddressOne != accountAddressTwo);
+        vm.assume(accountAddressOne != worldAddress);
+        vm.assume(accountAddressTwo != worldAddress);
 
         vm.prank(accountAddressOne);
         world.register({ devicePublicKeyX: devicePublicKeyX, devicePublicKeyY: devicePublicKeyY });

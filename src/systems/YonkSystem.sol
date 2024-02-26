@@ -48,6 +48,7 @@ contract YonkSystem is System {
             from: from,
             to: yonkInfo.to,
             claimed: false,
+            reclaimed: false,
             isToEphemeralOwner: false
         });
 
@@ -93,6 +94,7 @@ contract YonkSystem is System {
             from: from,
             to: to,
             claimed: false,
+            reclaimed: false,
             isToEphemeralOwner: true
         });
 

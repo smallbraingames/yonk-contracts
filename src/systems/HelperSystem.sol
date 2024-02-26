@@ -73,4 +73,10 @@ contract HelperSystem is System {
             )
         );
     }
+
+    function reclaimBatch(uint64[] memory yonkIds) public {
+        for (uint256 i = 0; i < yonkIds.length; i++) {
+            LibSystemSwitch.call(abi.encodeCall(ClaimSystem.reclaim, (yonkIds[i])));
+        }
+    }
 }
