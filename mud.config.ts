@@ -1,4 +1,3 @@
-import { resolveTableId } from "@latticexyz/config";
 import { mudConfig } from "@latticexyz/world/register";
 
 export default mudConfig({
@@ -29,6 +28,12 @@ export default mudConfig({
                 value: "address",
             },
         },
+        InverseEphemeralOwnerAddress: {
+            keySchema: { value: "address" },
+            valueSchema: {
+                id: "uint64",
+            },
+        },
         Id: {
             keySchema: {},
             valueSchema: {
@@ -46,6 +51,12 @@ export default mudConfig({
             keySchema: { id: "uint64" },
             valueSchema: {
                 value: "address",
+            },
+        },
+        InverseRegisteredAddress: {
+            keySchema: { value: "address" },
+            valueSchema: {
+                id: "uint64",
             },
         },
         Yonk: {
@@ -81,17 +92,5 @@ export default mudConfig({
             offchainOnly: true,
         
         }
-    },
-    modules: [
-        {
-            name: "KeysWithValueModule",
-            root: true,
-            args: [resolveTableId("RegisteredAddress")],
-        },
-        {
-            name: "KeysWithValueModule",
-            root: true,
-            args: [resolveTableId("EphemeralOwnerAddress")],
-        },
-    ],
+    }
 });

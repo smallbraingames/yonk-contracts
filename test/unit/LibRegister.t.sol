@@ -14,6 +14,7 @@ contract LibRegisterTest is YonkTest {
         assertTrue(LibRegister.isRegistered({ accountAddress: accountAddress }));
     }
 
+    /// forge-config: default.fuzz.runs = 2048
     function testFuzz_IsRegisteredTrueWhenRegistered(
         address accountAddressOne,
         address accountAddressTwo,
@@ -41,7 +42,25 @@ contract LibRegisterTest is YonkTest {
         assertTrue(!LibRegister.isRegistered({ accountAddress: accountAddress }));
     }
 
+    /// forge-config: default.fuzz.runs = 2048
     function testFuzz_IsRegisteredFalseWhenNoRegistrations(address accountAddress) public {
         assertTrue(!LibRegister.isRegistered({ accountAddress: accountAddress }));
+    }
+
+    /// forge-config: default.fuzz.runs = 2048
+    function testFuzz_IsRegisteredFalseForUnregisteredAddress(
+        address registeredAddress,
+        address unregisteredAddress
+    )
+        public
+    {
+        vm.assume(registeredAddress != address(0) && registeredAddress != address(0));
+        vm.assume(registeredAddress != unregisteredAddress);
+        vm.assume(registeredAddress != worldAddress);
+
+        vm.prank(registeredAddress);
+        world.register({ devicePublicKeyX: 1234, devicePublicKeyY: 5678 });
+
+        assertTrue(!LibRegister.isRegistered({ accountAddress: unregisteredAddress }));
     }
 }
