@@ -236,6 +236,21 @@ contract YonkSystemTest is YonkTest {
         world.encodeYonkInfo({ yonkInfo: yonkInfo });
     }
 
+    function testFuzz_RevertsWhen_EncodingOverflows(
+        uint256 startValue,
+        uint256 endValue,
+        uint256 lifeSeconds,
+        uint64 to
+    )
+        public
+    {
+        startValue = bound(startValue, 2 ** 50, 2 ** 255);
+        YonkInfo memory yonkInfo =
+            YonkInfo({ startValue: startValue, endValue: endValue, lifeSeconds: lifeSeconds, to: to });
+        vm.expectRevert(YonkSystem.UnsafeCast.selector);
+        world.encodeYonkInfo({ yonkInfo: yonkInfo });
+    }
+
     function test_RevertsWhen_ZeroValue() public {
         address a = address(0xface);
         address b = address(0xdead);

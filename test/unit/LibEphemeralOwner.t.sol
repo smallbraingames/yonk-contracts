@@ -39,6 +39,8 @@ contract LibEphemeralOwnerTest is YonkTest {
         vm.assume(devicePublicKeyY > 0);
         vm.assume(ephemeralOwner != address(0));
         vm.assume(ephemeralOwner != otherAddress);
+        vm.assume(ephemeralOwner != yonker);
+
         YonkInfo memory yonkInfo =
             YonkInfo({ startValue: startValue, endValue: endValue, lifeSeconds: lifeSeconds, to: 0 });
         uint176 encodedYonkInfo = world.encodeYonkInfo({ yonkInfo: yonkInfo });
