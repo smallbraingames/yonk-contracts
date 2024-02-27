@@ -6,6 +6,9 @@ import { LibId } from "libraries/LibId.sol";
 
 library LibEphemeralOwner {
     function setEphemeralOwnerAddress(address ephemeralOwner) internal returns (uint64) {
+        if (isRegistered(ephemeralOwner)) {
+            revert("[LibEphemeralOwner] Already registered");
+        }
         uint64 id = LibId.getId();
         EphemeralOwnerAddress.set({ id: id, value: ephemeralOwner });
         InverseEphemeralOwnerAddress.set({ value: ephemeralOwner, id: id });
