@@ -90,7 +90,7 @@ contract ClaimSystem is System {
         if (!LibRegister.hasId({ id: toId })) {
             revert ClaimerNotRegistered();
         }
-        
+
         Yonk.setTo({ id: yonkId, to: toId });
         Yonk.setIsToEphemeralOwner({ id: yonkId, isToEphemeralOwner: false });
 

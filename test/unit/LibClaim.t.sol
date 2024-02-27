@@ -36,6 +36,25 @@ contract LibClaimTest is YonkTest {
         assertTrue(!LibClaim.isAlive({ startTimestamp: startTimestamp, lifeSeconds: lifeSeconds }));
     }
 
+    function testFuzz_NeverAliveAfterNotAlive(
+        uint64 startTimestamp,
+        uint32 lifeSeconds,
+        uint64 timePassedA,
+        uint64 timePassedB
+    )
+        public
+    {
+        vm.assume(timePassedB > timePassedA);
+
+        vm.warp(uint256(startTimestamp) + uint256(timePassedA));
+        bool isAliveA = LibClaim.isAlive({ startTimestamp: startTimestamp, lifeSeconds: lifeSeconds });
+        vm.assume(!isAliveA);
+
+        vm.warp(uint256(startTimestamp) + uint256(timePassedB));
+        bool isAliveB = LibClaim.isAlive({ startTimestamp: startTimestamp, lifeSeconds: lifeSeconds });
+        assertTrue(!isAliveB);
+    }
+
     function test_VerifySignature() public {
         // P256 Vectors generated in test/p256-test-vectors/gen.ts
         string memory file = "./test/p256-test-vectors/vectors_random_valid.jsonl";
