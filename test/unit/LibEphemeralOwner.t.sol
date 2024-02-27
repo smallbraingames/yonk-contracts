@@ -19,6 +19,7 @@ contract LibEphemeralOwnerTest is YonkTest {
         LibEphemeralOwner.setEphemeralOwnerAddress(ephemeralOwner);
     }
 
+    /// forge-config: default.fuzz.runs = 2048
     function testFuzz_CorrectlyChecksEphemeralOwnerIsRegistered(
         address yonker,
         uint256 devicePublicKeyX,
