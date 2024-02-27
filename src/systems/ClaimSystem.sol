@@ -36,23 +36,23 @@ contract ClaimSystem is System {
     function reclaim(uint64 yonkId) public {
         YonkData memory yonkData = Yonk.get({ id: yonkId });
 
-        address senderAddress = _msgSender();
-        uint64 fromId = LibRegister.getAddressId({ accountAddress: senderAddress });
-
-        if (yonkData.from != fromId) {
-            revert NotYourYonk();
-        }
-
         if (yonkData.claimed) {
             revert AlreadyClaimed();
         }
 
-        if (LibClaim.isAlive({ startTimestamp: yonkData.startTimestamp, lifeSeconds: yonkData.lifeSeconds })) {
-            revert YonkNotExpired();
-        }
-
         if (yonkData.reclaimed) {
             revert AlreadyReclaimed();
+        }
+
+        address senderAddress = _msgSender();
+        uint64 senderId = LibRegister.getAddressId({ accountAddress: senderAddress });
+
+        if (yonkData.from != senderId) {
+            revert NotYourYonk();
+        }
+
+        if (LibClaim.isAlive({ startTimestamp: yonkData.startTimestamp, lifeSeconds: yonkData.lifeSeconds })) {
+            revert YonkNotExpired();
         }
 
         Yonk.setReclaimed({ id: yonkId, reclaimed: true });
