@@ -7,3 +7,5 @@ broadcast/
 src/codegen
 deploys/**/*.json
 .env
+**/.DS_Store
+verify.json
