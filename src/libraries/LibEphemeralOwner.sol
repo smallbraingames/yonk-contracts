@@ -5,9 +5,11 @@ import { EphemeralOwnerAddress, InverseEphemeralOwnerAddress } from "codegen/ind
 import { LibId } from "libraries/LibId.sol";
 
 library LibEphemeralOwner {
+    error AlreadyRegistered();
+
     function setEphemeralOwnerAddress(address ephemeralOwner) internal returns (uint64) {
         if (isRegistered(ephemeralOwner)) {
-            revert("[LibEphemeralOwner] Already registered");
+            revert AlreadyRegistered();
         }
         uint64 id = LibId.getId();
         EphemeralOwnerAddress.set({ id: id, value: ephemeralOwner });
